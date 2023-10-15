@@ -1,0 +1,25 @@
+.App {
+  text-align: center;
+}
+.title-style{
+  color: white;
+}
+
+.jumbotron{
+  padding: 40px;
+}
+.table1-title{
+  background-color: green;
+  color:white;
+  padding: 40px;
+}
+.table2-title{
+  background-color: red;
+  color:white;
+  padding: 40px;
+}
+.table3-title{
+  background-color: blue;
+  color:white;
+  padding: 40px;
+}
