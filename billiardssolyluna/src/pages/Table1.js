@@ -8,17 +8,36 @@ import {
     Container,
   } from "react-bootstrap";
 import pool from "../images/pooltable.png"
-import {useState} from "react"
+import {useState, useEffect} from "react"
 const Table1 = () => {
     const [timeStart, setTimeStart] = useState(false);
-    var totalSeconds = 0;
-    var minutesLabel = document.getElementById("minutes");
-    var secondsLabel = document.getElementById("seconds");
-    const startTimer = () =>{
-        setTimeStart(true)
-        setTime()
-    }
+    const [time, setTime] = useState(0)
+    const [show, showDate] = useState(false)
+    const [date, setDate] = useState("")
+    
 
+    useEffect(() => {
+       let interval
+       if(timeStart){
+        interval = setInterval(() => {
+            setTime((prevTime) => prevTime + 10)
+
+        }, 10)
+
+       }
+       else if (!timeStart){
+        clearInterval(interval);
+
+       }
+       return () => clearInterval(interval)
+    }, (timeStart))
+
+    const getDate = () =>{
+        const currentDate = new Date()
+        setDate(currentDate.getHours()+":"+currentDate.getMinutes()+":"+currentDate.getSeconds())
+        showDate(true)
+    }
+    /*
     const setTime = () =>{
         
         totalSeconds++
@@ -34,6 +53,7 @@ const Table1 = () => {
           return valString;
         }
       }
+      */
     return (
         <div>
             <div class="container">
@@ -41,10 +61,25 @@ const Table1 = () => {
                     <h3>Mesa 1</h3>
                     
                 </div>
-                <img src={pool}></img>
-                <Button class="btn-success" onClick={() => startTimer()}> Start time</Button>
+                <img src={pool}></img> <br/>
+                <button type="button" class="btn btn-success" onClick={() => (setTimeStart(true))}> Start time</button>
+                <button type="button" class="btn btn-success" onClick={() => getDate()}> Get Time</button> 
+                {date ? (
+                    <div>
+                       <p> {date}</p>
+                    </div>
+                ):null
+
+                }
                 {timeStart ? (
-                    <h3> Time: <label id="minutes">00</label>:<label id="seconds">00</label></h3>
+                    <div>
+                    <h3> Time: 
+                        <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}</span>:
+                        <span >{("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>:
+                        <span >{("0" + ((time / 10) % 100)).slice(-2)}</span>
+                    </h3>
+                    <button type="button" class="btn btn-success" onClick={() => {setTime(0); setTimeStart(false)}}> Stop time</button>
+                    </div>
                 ): null}
                 
             </div>
