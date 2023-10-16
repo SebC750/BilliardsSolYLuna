@@ -12,17 +12,12 @@ import {
 import Table1 from "./Table1.js"
 import Table2 from "./Table2.js"
 import Table3 from "./Table3.js"
-
+import Navbar from "./navbar.js"
 const MainPage = () => {
   return (
     <div>
 
-      <div class="jumbotron bg-dark">
-        <div class="title-style">
-          <h1> Billares Sol y Luna</h1>
-        </div>
-        
-      </div>
+      <Navbar></Navbar>
 
       <div class="tables">
           <div class="table1">
