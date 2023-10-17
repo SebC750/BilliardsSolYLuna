@@ -1,6 +1,6 @@
 import pool from "../images/pooltable.png"
 import {useState, useEffect} from "react"
-const Table3 = () => {
+const Table3 = (data) => {
     const [timeStart, setTimeStart] = useState(false);
     const [time, setTime] = useState(0)
     const [startDate, setStartDate] = useState("")
