@@ -4,7 +4,7 @@ const Navbar = () =>{
     return(
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="navbar-styling">
-      <a class="navbar-brand" style={{color: "white", fontSize: "30px"}}><div class="billiardsLogo"> <img src={sunAndMoon} alt="this is an image"></img></div>Billares Sol Y Luna </a>
+      <a class="navbar-brand" style={{color: "white", fontSize: "30px"}}><img src={sunAndMoon} className="billiardsLogo" alt="this is an image"></img>Billares Sol Y Luna </a>
       </div>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>

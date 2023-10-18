@@ -10,6 +10,7 @@ import {
   Jumbotron,
 } from "react-bootstrap";
 import Table1 from "./Table1.js"
+import {profitImport} from "./Table1.js"
 import Table2 from "./Table2.js"
 import Table3 from "./Table3.js"
 import Navbar from "./navbar.js"
@@ -32,34 +33,13 @@ const MainPage = () => {
               </div>
               <div class="col-md">
               <Table3 data={itemList}></Table3>
+              
               </div>
             </div>
             
           </div>
       </div>
-      {console.log(itemList)}
-        <table id = "tableFormat" class = "table">
-        <tbody>
-         <tr id = "headerRow">
-            <th> item_id </th>
-            <th> item_name </th>
-            <th> item_price </th>
-            
-         </tr>
-         {itemList.map((val)=>(
-  
-  <tr key={val.item_id}>
-  <td>{val.item_id}</td>
-  <td>{val.item_name}</td>
-  <td>{val.item_price}</td>
- 
-  </tr>
- ))}
-         
-         </tbody>
-         
-         
-        </table>
+      
        
 
         

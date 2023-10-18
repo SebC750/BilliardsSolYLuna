@@ -55,6 +55,11 @@ const ItemArray =
         "item_id": 11,
         "item_name": "Pina Colada Virgen",
         "item_price": 10
+      },
+      {
+        "item_id": 12,
+        "item_name": "Cubeta",
+        "item_price": 30
       }
     ]
 export default ItemArray;
