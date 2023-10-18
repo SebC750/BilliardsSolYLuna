@@ -60,6 +60,11 @@ const ItemArray =
         "item_id": 12,
         "item_name": "Cubeta",
         "item_price": 30
-      }
+      },
+      {
+        "item_id": 13,
+        "item_name": "Bocadillo",
+        "item_price": 2
+      },
     ]
 export default ItemArray;
