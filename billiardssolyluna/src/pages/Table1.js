@@ -55,9 +55,9 @@ const Table1 = ({ data }) => {
         setAddItemPrompt(false)
     }
     const calculateTotalPrice = () => {
-        var s = time/1000
-        var m = (s/60).toFixed(0)
-        var h = (s/3600).toFixed(0)
+        var s = ((time/1000) % 60).toFixed(0)
+        var m = ((time/60000) % 60).toFixed(0)
+        var h = ((s/3600000000) % 60).toFixed(0)
 
         const totalTimeElapsed = "Horas "+h.toString().padStart(2,'0')+" Minutos "+m.toString().padStart(2,'0')+" Segundos "+s.toString().padStart(2,'0')
         setTotalTimeElapsed(totalTimeElapsed)
@@ -76,9 +76,8 @@ const Table1 = ({ data }) => {
         var salesTax = totalPrice*0.08875
         var totalPriceWithSales = (Math.round((totalPrice+salesTax)*100)/100).toFixed(2)
         setTotalPrice(totalPriceWithSales)
-        profit += totalPriceWithSales
-        console.log(profit)
-        console.log(totalPriceWithSales)
+       
+        
     }
     const stopTimer = () => {
         setShowEndButton(false)
@@ -119,17 +118,21 @@ const Table1 = ({ data }) => {
             setShowTimer(true)
             setShowStartButton(false)
             setShowEndButton(true)
-            var date = new Date()
-            var hourTo12 = date.getHours();
-            var am_pm = "am"
-            if (date.getHours() > 12) {
-                hourTo12 = date.getHours() - 12;
-                am_pm = "pm"
-            }
-            setStartDate(hourTo12.toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0') + ":" + date.getSeconds().toString().padStart(2, '0')+" "+am_pm)
+            var startDate = new Date()
+            var startSeconds = startDate.getSeconds()
+            var hourTo12 = startDate.getHours();
+        if (startDate.getHours() > 12) {
+            hourTo12 = startDate.getHours() - 12;
+        }
+            setStartDate(hourTo12.toString().padStart(2, '0') + ":" + startDate.getMinutes().toString().padStart(2, '0') + ":" + startDate.getSeconds().toString().padStart(2, '0'))
             interval = setInterval(() => {
-                setTime((prevTime) => prevTime + 1000)
-            }, 1000)
+
+                var elapsed = new Date().getTime() - startDate.getTime()
+                var currentTime = startSeconds + elapsed
+                
+                    setTime(currentTime)
+                    
+            },1000)
         }
         else if (!timeStart) {
 
@@ -171,7 +174,7 @@ const Table1 = ({ data }) => {
 
                             <h3> Tiempo Comenzado: {startDate}</h3>
                             <h3> Tiempo Restante: <br />
-                                <span> {("0" + Math.floor((time / 360000) % 60)).slice(-2)}:</span>
+                                <span> {("0" + Math.floor((time / 3600000000) % 60)).slice(-2)}:</span>
                                 <span> {("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
                                 <span> {("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>
                             </h3>

@@ -46,11 +46,7 @@ const ItemArray =
         "item_name": "Redbull",
         "item_price": 7
       },
-      {
-        "item_id": 10,
-        "item_name": "Vaso de Vino",
-        "item_price": 6
-      },
+      
       {
         "item_id": 11,
         "item_name": "Pina Colada Virgen",

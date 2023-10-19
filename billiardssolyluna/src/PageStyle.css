@@ -55,7 +55,7 @@ li {
 .billiardsLogo{
   height: 150px;
   width: 150px;
-  padding-right: 10px;
+  margin-right: 15px;
 }
 .receipt-title-border{
   border-right: 5px solid #000;
