@@ -1,6 +1,6 @@
 //import $ from "jquery";
-//import { apiAddresses } from "../../../appInfo";
-
+import { apiAddresses } from "./appInfo";
+import $ from "jquery";
 const setUp = () =>
   $.ajaxSetup({
     xhrFields: {
@@ -8,6 +8,13 @@ const setUp = () =>
     },
   });
 
-  
+  const getReceipts = (callback) =>{
+    setUp();
+    $.get({
+      url: apiAddresses.getReceipts,
+      
+      success: (data) => callback(data),
+    });
+  }
 
-
+export {getReceipts}

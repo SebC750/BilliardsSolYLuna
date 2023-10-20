@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom"
 import Navbar from "./navbar.js"
 import Dropdown from "react-bootstrap/Dropdown"
-
+import {getReceipts} from "./receiptAPI.js"
 import { useState, useEffect } from "react"
 const ReceiptHistory = () => {
     const [data, setData] = useState([])
     const [searchType, setSearchType] = useState("")
+    const getData = () => {
+        getReceipts(receiptData =>
+            setData([{ab: receiptData.about, n: receiptData.name}]))
+        
+        console.log(data)
+    }
     return (
         <div>
             <Navbar></Navbar>
@@ -68,7 +74,16 @@ const ReceiptHistory = () => {
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary"> <Link to="/" style={{ color: "white", fontSize: "25px", textDecoration: "none" }}> Atras </Link></button>
+            <button type="button" class="btn btn-primary"> <Link to="/" style={{ color: "white", fontSize: "25px", textDecoration: "none" }}> Atras </Link></button> <br/>
+            <button type="button" class="btn btn-primary" onClick={() => getData()}> Test Backend </button>
+            {data.map((val) => {
+                <div>
+                    <ul>
+                        <li> {val.ab}</li>
+                        <li> {val.n}</li>
+                    </ul>
+                </div>
+            })}
         </div>
     );
 }
