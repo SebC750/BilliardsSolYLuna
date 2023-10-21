@@ -1,5 +1,5 @@
 
-const apiAddress = "http://localhost:5000";
+const apiAddress = "";
 const apiAddresses = {
       getReceipts: `${apiAddress}/GetReceipts`,
 }

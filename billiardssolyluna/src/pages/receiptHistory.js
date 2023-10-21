@@ -6,15 +6,28 @@ import { useState, useEffect } from "react"
 const ReceiptHistory = () => {
     const [data, setData] = useState([])
     const [searchType, setSearchType] = useState("")
-    const getData = () => {
-        getReceipts(receiptData =>
-            setData([{ab: receiptData.about, n: receiptData.name}]))
+    
+    useEffect(() =>{
+        getReceipts(receiptData =>{
+           setData(receiptData)
+           
+            
+        })
         
-        console.log(data)
-    }
+        
+        
+    },[])
+       
+        
+    
     return (
         <div>
             <Navbar></Navbar>
+            
+                                    
+                                   
+                               
+            
             <div class="history-title">
                 <h1> Historial de Recibos </h1>
             </div>
@@ -55,19 +68,27 @@ const ReceiptHistory = () => {
                         <div class="table" style={{ width: "1000px" }}>
                             <thead>
                                 <tr>
+                                    {/*
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Order ID</th>
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Unidades</th>
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Producto</th>
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Precio</th>
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Fecha de Compra</th>
-
+                                   */}
+                                   <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Receipt ID</th>
+                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Name </th>
+                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Date</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <td> Test ID</td>
-                                <td> Test Unit</td>
-                                <td> Test Item</td>
-                                <td> Test Precio</td>
+                            {data.map((val) => (
+                                    <tr key={val.ID}>
+                                        <td>{val[0].ID}</td>
+                                        <td>{val[0].ReceiptName}</td>
+                                        <td>{val.Date}</td>
+
+                                    </tr>
+                                ))}
                             </tbody>
 
                         </div>
@@ -75,15 +96,8 @@ const ReceiptHistory = () => {
                 </div>
             </div>
             <button type="button" class="btn btn-primary"> <Link to="/" style={{ color: "white", fontSize: "25px", textDecoration: "none" }}> Atras </Link></button> <br/>
-            <button type="button" class="btn btn-primary" onClick={() => getData()}> Test Backend </button>
-            {data.map((val) => {
-                <div>
-                    <ul>
-                        <li> {val.ab}</li>
-                        <li> {val.n}</li>
-                    </ul>
-                </div>
-            })}
+            
+            
         </div>
     );
 }

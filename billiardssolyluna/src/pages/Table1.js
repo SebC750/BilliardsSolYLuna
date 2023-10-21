@@ -32,7 +32,7 @@ const Table1 = ({ data }) => {
     const [tablePrice, setTablePrice] = useState(0)
     const [totalPrice, setTotalPrice] = useState(0)
     const [totalTimeElapsed,setTotalTimeElapsed] = useState("")
-    var profit = 0
+    
    
     const addPurchase = () => {
         setAddItemPrompt(false)
@@ -55,11 +55,16 @@ const Table1 = ({ data }) => {
         setAddItemPrompt(false)
     }
     const calculateTotalPrice = () => {
-        var s = ((time/1000) % 60).toFixed(0)
-        var m = ((time/60000) % 60).toFixed(0)
-        var h = ((s/3600000000) % 60).toFixed(0)
-
-        const totalTimeElapsed = "Horas "+h.toString().padStart(2,'0')+" Minutos "+m.toString().padStart(2,'0')+" Segundos "+s.toString().padStart(2,'0')
+        var s = ((time/1) % 60).toFixed(0)
+        
+        var m = Math.floor(((time/60) % 60)).toFixed(0)
+        var h = Math.floor(((time/3600) % 60)).toFixed(0)
+        
+       
+            var totalTimeElapsed = "Horas "+h.toString().padStart(2,'0')+" Minutos "+m.toString().padStart(2,'0')+" Segundos "+s.toString().padStart(2,'0')
+        
+        
+        
         setTotalTimeElapsed(totalTimeElapsed)
         console.log(h+" "+m+" "+s)
         var total = 0
@@ -115,6 +120,7 @@ const Table1 = ({ data }) => {
     useEffect(() => {
         let interval
         if (timeStart) {
+            console.log(Math.floor((30/60) % 60))
             setShowTimer(true)
             setShowStartButton(false)
             setShowEndButton(true)
@@ -128,9 +134,9 @@ const Table1 = ({ data }) => {
             interval = setInterval(() => {
 
                 var elapsed = new Date().getTime() - startDate.getTime()
-                var currentTime = startSeconds + elapsed
-                
-                    setTime(currentTime)
+                var currentTime = (startSeconds + elapsed)*0.001
+                console.log(Math.round(currentTime))
+                    setTime(Math.round(currentTime))
                     
             },1000)
         }
@@ -174,9 +180,9 @@ const Table1 = ({ data }) => {
 
                             <h3> Tiempo Comenzado: {startDate}</h3>
                             <h3> Tiempo Restante: <br />
-                                <span> {("0" + Math.floor((time / 3600000000) % 60)).slice(-2)}:</span>
-                                <span> {("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
-                                <span> {("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>
+                                <span> {("0" + Math.floor((time / 3600) % 60)).slice(-2)}:</span>
+                                <span> {("0" + Math.floor((time / 60) % 60)).slice(-2)}:</span>
+                                <span> {("0" + Math.floor((time / 1) % 60)).slice(-2)}</span>
                             </h3>
                             {endTime ? (
                                 <h3> Tiempo Terminado: {endTime}</h3>
