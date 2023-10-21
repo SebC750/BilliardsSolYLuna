@@ -22,11 +22,7 @@ class Receipt:
         }
 connection = None
 try:
-    connection = mysql.connector.connect(host='',
-                                         database='',
-                                         user='',
-                                         password='',
-                                         port='')
+    
     if connection.is_connected():
         db_Info = connection.get_server_info()
         print("Connected to MySQL Server version ", db_Info)
