@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import Navbar from "./navbar.js"
 import Dropdown from "react-bootstrap/Dropdown"
-import {getReceipts} from "./receiptAPI.js"
+import {getReceipts, getReceiptsByProduct,getReceiptsByName,getReceiptsByDate} from "./receiptAPI.js"
 import { useState, useEffect } from "react"
 const ReceiptHistory = () => {
     const [data, setData] = useState([])
@@ -9,8 +9,8 @@ const ReceiptHistory = () => {
     
     useEffect(() =>{
         getReceipts(receiptData =>{
-           setData(receiptData)
-           
+           setData(receiptData['ReceiptOrders'])
+           console.log(receiptData['ReceiptOrders'])
             
         })
         
@@ -18,7 +18,17 @@ const ReceiptHistory = () => {
         
     },[])
        
-        
+    const searchItem = () =>{
+        if(searchType === "Producto"){
+             
+        }
+        if(searchType === "Nombre"){
+
+        }
+        if(searchType === "Fecha"){
+
+        }
+    }    
     
     return (
         <div>
@@ -26,8 +36,7 @@ const ReceiptHistory = () => {
             
                                     
                                    
-                               
-            
+                                   
             <div class="history-title">
                 <h1> Historial de Recibos </h1>
             </div>
@@ -68,27 +77,30 @@ const ReceiptHistory = () => {
                         <div class="table" style={{ width: "1000px" }}>
                             <thead>
                                 <tr>
-                                    {/*
+                                    
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Order ID</th>
+                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Nombre de Cliente</th>
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Unidades</th>
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Producto</th>
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Precio</th>
                                     <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Fecha de Compra</th>
-                                   */}
-                                   <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Receipt ID</th>
-                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Name </th>
-                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Date</th>
+                                   
+                                  
                                 </tr>
                             </thead>
                             <tbody>
+                            
                             {data.map((val) => (
-                                    <tr key={val.ID}>
-                                        <td>{val[0].ID}</td>
-                                        <td>{val[0].ReceiptName}</td>
+                                    <tr key={val.OrderID}>
+                                        <td>{val.OrderID}</td>
+                                        <td>{val.ReceiptName}</td>
+                                        <td>{val.Quantity}</td>
+                                        <td>{val.Product}</td>
+                                        <td>{val.Price}</td>
                                         <td>{val.Date}</td>
-
                                     </tr>
                                 ))}
+                            
                             </tbody>
 
                         </div>

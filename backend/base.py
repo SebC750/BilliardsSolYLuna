@@ -9,6 +9,7 @@ import json
 api = Flask(__name__)
 CORS(api, supports_credentials=True)
 
+#Class for Receipt
 class Receipt:
     def __init__(self,ID,name,date):
         self.ID = ID
@@ -20,9 +21,28 @@ class Receipt:
             "ReceiptName": self.name,
             "Date": self.date
         }
+
+class ReceiptOrder:
+    def __init__(self,orderID,receiptName,quantity,product,price,date):
+        self.orderID = orderID
+        self.receiptName = receiptName
+        self.quantity = quantity
+        self.product = product
+        self.price = price
+        self.date = date
+    def to_json(self):
+        return {
+            "OrderID": self.orderID,
+            "ReceiptName": self.receiptName,
+            "Quantity": self.quantity,
+            "Product": self.product,
+            "Price": self.price,
+            "Date": self.date,
+        }
+
 connection = None
 try:
-    
+    connection = mysql.connector.connect()
     if connection.is_connected():
         db_Info = connection.get_server_info()
         print("Connected to MySQL Server version ", db_Info)
@@ -34,14 +54,45 @@ try:
 except Error as e:
     print("Error while connecting to MySQL", e)
 
-
+@api.route('/')
+def welcomeMessage():
+    welcome = "hello world"
+    return welcome
+    
 @api.route('/GetReceipts')
-def my_profile():
-    
-    
+def getReceipts():    
     getConnect = connection.cursor(buffered=True)
-    query = ("SELECT * FROM Receipts")
+    query = ("SELECT ReceiptOrders.OrderID, Receipts.ReceiptName, ReceiptOrders.quantity, ReceiptOrders.product, ReceiptOrders.price, ReceiptOrders.ReceiptDate FROM ReceiptOrders INNER JOIN receipts ON receipts.ReceiptID = receiptorders.ReceiptID")
     getConnect.execute(query)
     row = getConnect.fetchall()
-    print(row)
-    return row
+    
+    rowList = []
+    for i in row:
+        d = ReceiptOrder(i[0],i[1],i[2],i[3],i[4],i[5]).to_json()
+        rowList.append(d)
+    rowDict = {
+        "ReceiptOrders": rowList
+    }  
+    
+    return rowDict
+@api.route('/GetReceiptsByProduct')
+def getReceiptsByProduct():
+    getConnect = connection.cursor(buffered=True)
+    query = ("SELECT * FROM ReceiptOrders WHERE")
+    getConnect.execute(query)
+    row = getConnect.fetchall()
+    
+    rowList = []
+    for i in row:
+        d = ReceiptOrder(i[0],i[2],i[3],i[4],i[5]).to_json()
+        rowList.append(d)
+    rowDict = {
+        "ReceiptOrders": rowList
+    }
+    return rowDict
+@api.route('/GetReceiptsByName')
+def getReceiptsByName():
+    print("")
+@api.route('/GetReceiptsByDate')
+def getReceiptsByDate():
+    print("")
