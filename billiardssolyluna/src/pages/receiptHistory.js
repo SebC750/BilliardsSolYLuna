@@ -8,6 +8,7 @@ const ReceiptHistory = () => {
     const [searchType, setSearchType] = useState("")
     
     useEffect(() =>{
+       
         getReceipts(receiptData =>{
            setData(receiptData['ReceiptOrders'])
            console.log(receiptData['ReceiptOrders'])
@@ -20,10 +21,22 @@ const ReceiptHistory = () => {
        
     const searchItem = () =>{
         if(searchType === "Producto"){
-             
+             var productVal = document.getElementById("input").value
+             console.log(productVal)
+             getReceiptsByProduct(productVal, productResult =>{
+                setData(productResult['ReceiptOrders'])
+                console.log(data)
+             })
+             console.log(productVal)
         }
         if(searchType === "Nombre"){
-
+            var nameVal = document.getElementById("input").value
+            console.log(nameVal)
+            getReceiptsByName(nameVal, nameResult =>{
+               setData(nameResult['ReceiptOrders'])
+               console.log(data)
+            })
+            console.log(productVal)
         }
         if(searchType === "Fecha"){
 
@@ -44,7 +57,7 @@ const ReceiptHistory = () => {
             <div class="history-body">
                 <div class="container">
 
-
+                 
                    <div class="searchBar">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -61,7 +74,10 @@ const ReceiptHistory = () => {
 
                             </Dropdown.Menu>
                         </Dropdown>
-                        <input type="text" class="form-control" />
+                        
+                        <input type="text" class="form-control" id="input" name="inputVal"/>
+                        
+                        <button type="button" class="btn btn-primary" onClick={() => searchItem()}> Ingresar </button>
                     </div>
                     </div>
 
@@ -89,7 +105,11 @@ const ReceiptHistory = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                            
+                            {!data ? (
+                                 <div>
+                                    <p> Loading </p>
+                                 </div>
+                            ):null}
                             {data.map((val) => (
                                     <tr key={val.OrderID}>
                                         <td>{val.OrderID}</td>

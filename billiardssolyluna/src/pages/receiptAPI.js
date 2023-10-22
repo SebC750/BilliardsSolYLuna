@@ -21,7 +21,7 @@ const setUp = () =>
     $.get({
       url: apiAddresses.getReceiptsByProduct,
       data: {
-        productInput: productInput,
+        productInput: productInput
       },
       success: (data) => callback(data),
     });

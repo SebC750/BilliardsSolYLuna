@@ -122,3 +122,18 @@ border-bottom: 5px solid #000;
 .searchBar{
   padding-top: 15px;
 }
+.other-receipt-body{
+  border-right: 5px solid #000;
+border-left: 5px solid #000;
+border-top: 5px solid #000;
+border-bottom: 5px solid #000;
+}
+.other-receipt-title{
+  border-right: 5px solid #000;
+border-left: 5px solid #000;
+border-top: 5px solid #000;
+border-bottom: 5px solid #000;
+background-color: purple;
+  color:white;
+  padding: 40px;
+}

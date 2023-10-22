@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from flask import jsonify
 from mysql.connector import Error
@@ -42,7 +42,7 @@ class ReceiptOrder:
 
 connection = None
 try:
-    connection = mysql.connector.connect()
+    connection = mysql.connector.connect(host="", database="", username="",password="",port="")
     if connection.is_connected():
         db_Info = connection.get_server_info()
         print("Connected to MySQL Server version ", db_Info)
@@ -75,16 +75,20 @@ def getReceipts():
     }  
     
     return rowDict
-@api.route('/GetReceiptsByProduct')
+@api.route('/GetReceiptsByProduct', methods=['GET'])
 def getReceiptsByProduct():
     getConnect = connection.cursor(buffered=True)
-    query = ("SELECT * FROM ReceiptOrders WHERE")
-    getConnect.execute(query)
+    product = request.args.get('productInput')
+    print("Result",product)
+    query = "SELECT ReceiptOrders.OrderID, Receipts.ReceiptName, ReceiptOrders.quantity, ReceiptOrders.product, ReceiptOrders.price, ReceiptOrders.ReceiptDate FROM ReceiptOrders INNER JOIN receipts ON receipts.ReceiptID = receiptorders.ReceiptID WHERE receiptorders.product = %s"
+    
+    productQuery = (product,)
+    getConnect.execute(query, productQuery)
     row = getConnect.fetchall()
     
     rowList = []
     for i in row:
-        d = ReceiptOrder(i[0],i[2],i[3],i[4],i[5]).to_json()
+        d = ReceiptOrder(i[0],i[1],i[2],i[3],i[4],i[5]).to_json()
         rowList.append(d)
     rowDict = {
         "ReceiptOrders": rowList
@@ -92,7 +96,23 @@ def getReceiptsByProduct():
     return rowDict
 @api.route('/GetReceiptsByName')
 def getReceiptsByName():
-    print("")
+    getConnect = connection.cursor(buffered=True)
+    name = request.args.get('nameInput')
+    print("Result",name)
+    query = "SELECT ReceiptOrders.OrderID, Receipts.ReceiptName, ReceiptOrders.quantity, ReceiptOrders.product, ReceiptOrders.price, ReceiptOrders.ReceiptDate FROM ReceiptOrders INNER JOIN receipts ON receipts.ReceiptID = receiptorders.ReceiptID WHERE receipts.ReceiptName = %s"
+    
+    nameQuery = (name,)
+    getConnect.execute(query, nameQuery)
+    row = getConnect.fetchall()
+    
+    rowList = []
+    for i in row:
+        d = ReceiptOrder(i[0],i[1],i[2],i[3],i[4],i[5]).to_json()
+        rowList.append(d)
+    rowDict = {
+        "ReceiptOrders": rowList
+    }
+    return rowDict
 @api.route('/GetReceiptsByDate')
 def getReceiptsByDate():
     print("")
