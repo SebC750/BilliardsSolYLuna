@@ -131,9 +131,11 @@ const Table2 = ({ data }) => {
             interval = setInterval(() => {
 
                 var elapsed = new Date().getTime() - startDate.getTime()
-                var currentTime = startSeconds + elapsed
+                var currentTime = (startSeconds + elapsed)*0.001
+                console.log(Math.round(currentTime))
+                    setTime(Math.round(currentTime))
                 
-                    setTime(currentTime)
+                    
             },1000)
             
         }
