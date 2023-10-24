@@ -1,17 +1,20 @@
 const { app, BrowserWindow } = require('electron')
-
+const path = require('node:path')
 function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: false,
+      enableRemoteModule: true,
+      contextIsolation: true,
+      preload:  path.join(__dirname, 'preload.js')
+    },
   })
 
   //load the index.html from a url
-  win.loadURL('http://localhost:3000');
+  win.loadFile(path.join(__dirname, "index.html"));
 
   // Open the DevTools.
   win.webContents.openDevTools()

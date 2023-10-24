@@ -3,18 +3,49 @@ import Navbar from "./navbar.js"
 import Dropdown from "react-bootstrap/Dropdown"
 import {getReceipts, getReceiptsByProduct,getReceiptsByName,getReceiptsByDate} from "./receiptAPI.js"
 import { useState, useEffect } from "react"
+import "/preload.js"
+/*
+const {app} = window.require('electron');
+const Datastore = window.require('nedb');
+
+var db = new Datastore({ filename: 'receiptDB.db', autoload: true });
+db.loadDatabase();
+const insert = () => {
+    var doc = { name: 'world',
+                age: 23
+               };
+     db.insert(doc)
+     db.find({name: 'world'})
+     console.log()
+     
+}
+const find = () =>{
+    db.find({name: {$exists: true}}, (err, docs)=>{
+    console.log(docs)
+      });
+    
+}
+*/
+
+
 const ReceiptHistory = () => {
     const [data, setData] = useState([])
     const [searchType, setSearchType] = useState("")
     
+    const testDatabase = () => {
+        
+    }
+    
     useEffect(() =>{
-       
+        window.electron.doThing()
+        window.electron.getAll()
+       /*
         getReceipts(receiptData =>{
            setData(receiptData['ReceiptOrders'])
            console.log(receiptData['ReceiptOrders'])
             
         })
-        
+        */
         
         
     },[])
@@ -128,8 +159,10 @@ const ReceiptHistory = () => {
                 </div>
             </div>
             <button type="button" class="btn btn-primary"> <Link to="/" style={{ color: "white", fontSize: "25px", textDecoration: "none" }}> Atras </Link></button> <br/>
-            
-            
+           {/*
+            <button type="button" class="btn btn-primary" onClick={() => insert()}> Add data</button>
+            <button type="button" class="btn btn-primary" onClick={() => find()}> get data</button>
+                            */}
         </div>
     );
 }
