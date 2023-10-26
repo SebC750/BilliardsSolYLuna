@@ -1,11 +1,14 @@
-import { BrowserRouter , Routes, Route} from 'react-router-dom'
+import { BrowserRouter , Routes, Route, HashRouter} from 'react-router-dom'
 import './PageStyle.css';
 import MainPage from './pages/mainpage'
 import ReceiptHistory from './pages/receiptHistory'
+import React from 'react';
+import "../src/pages/renderer.js"
 function App() {
   return (
     <div className="App">
-    <BrowserRouter>
+      
+    <HashRouter>
     <Routes>
     
      
@@ -16,7 +19,8 @@ function App() {
     <Route exact path="/ReceiptHistory" element={<ReceiptHistory/>}> </Route>
     
     </Routes>
-    </BrowserRouter>
+    </HashRouter>
+  
     </div>
   );
 }

@@ -130,7 +130,7 @@ const Table1 = ({ data }) => {
         if (startDate.getHours() > 12) {
             hourTo12 = startDate.getHours() - 12;
         }
-            setStartDate(hourTo12.toString().padStart(2, '0') + ":" + startDate.getMinutes().toString().padStart(2, '0') + ":" + startDate.getSeconds().toString().padStart(2, '0'))
+            setStartDate(hourTo12.toString().padStart(2, '0') + ":" + startDate.getMinutes().toString().padStart(2, '0') + ":" + startDate.getSeconds().toString().padStart(2, '0') + "am")
             interval = setInterval(() => {
 
                 var elapsed = new Date().getTime() - startDate.getTime()

@@ -1,21 +1,30 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Notification, ipcMain} = require('electron')
 const path = require('node:path')
+
+var isDev = process.env.APP_DEV ? (process.env.APP_DEV.trim() == "true") : false;
+
+if (isDev) {
+  require('electron-reload')(__dirname, {
+    electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
+  })
+}
 function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 1200,
     webPreferences: {
       nodeIntegration: false,
-      enableRemoteModule: true,
+      enableRemoteModule: false,
       contextIsolation: true,
-      preload:  path.join(__dirname, 'preload.js')
+      
+      preload:  path.join(__dirname,'preload.js')
     },
   })
-
+  
   //load the index.html from a url
-  win.loadFile(path.join(__dirname, "index.html"));
-
+  win.loadFile(path.join(__dirname, 'index.html'));
+  
   // Open the DevTools.
   win.webContents.openDevTools()
 }
@@ -41,4 +50,10 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
+})
+ipcMain.on('notify', (event, args) => {
+ console.log(args)
+})
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log("heyyyy",arg) // prints "heyyyy ping"
 })

@@ -10,12 +10,15 @@ import {
   Jumbotron,
 } from "react-bootstrap";
 import Table1 from "./Table1.js"
-import {profitImport} from "./Table1.js"
+
 import Table2 from "./Table2.js"
 import Table3 from "./Table3.js"
 import Navbar from "./navbar.js"
 import { useState, useEffect } from "react"
 import ItemArray from "./items.js"
+const {ipcRenderer} = require("electron")
+
+
 const MainPage = () => {
   const [itemList, setItemList] = useState(ItemArray)
   const [receiptModal, openReceiptModal] = useState(false)
@@ -25,9 +28,12 @@ const MainPage = () => {
   const addReceipt = () =>{
 
   }
+  useEffect(() =>{
+   
+})
   return (
     <div>
-
+     
       <Navbar></Navbar>
 
       <div class="tables">
