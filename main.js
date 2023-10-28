@@ -1,7 +1,12 @@
 const { app, BrowserWindow, Notification, ipcMain} = require('electron')
 const path = require('node:path')
 
-var isDev = process.env.APP_DEV ? (process.env.APP_DEV.trim() == "true") : false;
+const Datastore = require('nedb-promises');
+
+var db = Datastore.create({ filename: 'receiptDB.db', autoload: true });
+db.load();
+
+var isDev = true;
 
 if (isDev) {
   require('electron-reload')(__dirname, {
@@ -21,10 +26,44 @@ function createWindow () {
       preload:  path.join(__dirname,'preload.js')
     },
   })
-  
+     /*
+    db.find({} ,(err,docs) =>{
+      //console.log(docs)
+      string = "this is a message"
+      docs.map((val) =>{
+              
+        resultArray.push({n: val.name, a: val.age})
+      })
+      
+       
+       return resultArray
+    })
+    return resultArray
+     */
   //load the index.html from a url
-  win.loadFile(path.join(__dirname, 'index.html'));
-  
+  win.loadFile(path.join(__dirname, '/public/index.html'));
+
+  ipcMain.handle('get-all', async () =>{
+    const getAllDatabaseValues = await db.find({})
+    
+    
+    
+    return getAllDatabaseValues
+  })
+  ipcMain.handle('insert-receipt', async (err, data) =>{
+    const insertReceipt = await db.insert(data)
+    
+    
+    
+    return insertReceipt
+  })
+  ipcMain.handle('delete-receipt', async (err, data) =>{
+    const deleteReceipt = await db.remove({_id: data})
+    
+    
+    
+    return deleteReceipt
+  })
   // Open the DevTools.
   win.webContents.openDevTools()
 }
@@ -51,9 +90,8 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
 ipcMain.on('notify', (event, args) => {
  console.log(args)
 })
-ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log("heyyyy",arg) // prints "heyyyy ping"
-})
+

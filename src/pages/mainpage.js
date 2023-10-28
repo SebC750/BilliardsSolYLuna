@@ -16,26 +16,36 @@ import Table3 from "./Table3.js"
 import Navbar from "./navbar.js"
 import { useState, useEffect } from "react"
 import ItemArray from "./items.js"
-const {ipcRenderer} = require("electron")
+
+
 
 
 const MainPage = () => {
   const [itemList, setItemList] = useState(ItemArray)
   const [receiptModal, openReceiptModal] = useState(false)
+  const [data, setData] = useState([])
+  
   const closeModal = () =>{
     openReceiptModal(false)
   }
+  async function getData(){
+    const message = await database.getAll()
+    setData(message)
+    console.log(data)
+   
+  }
+  
   const addReceipt = () =>{
-
+    
   }
   useEffect(() =>{
-   
+    
 })
   return (
     <div>
      
       <Navbar></Navbar>
-
+      {console.log(data[0])}
       <div class="tables">
           <div class="table1">
             <div class="row">
@@ -96,8 +106,38 @@ const MainPage = () => {
       </div>
       
        
+       <div id="test"> <button type="button" class="btn btn-primary" onClick={() => getData()}> Show data</button></div>
+       
+       <div align="center">
+                                <div class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"> ID</th>
+                                            <th scope="col"> Name</th>
+                                            <th scope="col"> Age</th>
+                                            
 
-        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {data.map((val) => (
+                                            <tr key={val._id}>
+                                                <td>{val._id}</td>
+                                                <td>{val.name}</td>
+                                                <td>{val.age}</td>
+                                                
+                                                
+                                                
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                    
+                                </div>
+                            </div>
+       
+         
+      
+      
     </div>
   );
 }

@@ -117,6 +117,7 @@ const Table1 = ({ data }) => {
         showTotalReceipt(false)
         setTime(0)
     }
+    
     useEffect(() => {
         let interval
         if (timeStart) {
@@ -324,6 +325,5 @@ const Table1 = ({ data }) => {
         </div>
     );
 }
-const profitVal = Table1.profit
-export const profitImport = profitVal
+
 export default Table1;

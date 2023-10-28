@@ -166,10 +166,8 @@ const ReceiptHistory = () => {
                 </div>
             </div>
             <button type="button" class="btn btn-primary"> <Link to="/" style={{ color: "white", fontSize: "25px", textDecoration: "none" }}> Atras </Link></button> <br/>
-           {/*
-           <button type="button" class="btn btn-primary" onClick={() => find()}> get data</button>
-           */}
-            <button type="button" class="btn btn-primary" onClick={() => insert()}> Add data</button>
+           
+            
             
                                     
         </div>

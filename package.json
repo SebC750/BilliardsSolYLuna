@@ -2,7 +2,7 @@
   "name": "billiardssolyluna",
   "version": "0.1.0",
   "private": true,
-  "main": "src/pages/main.js",
+  "main": "main.js",
   "homepage": "./",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
