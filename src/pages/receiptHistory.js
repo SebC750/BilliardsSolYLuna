@@ -1,58 +1,40 @@
 import { Link } from "react-router-dom"
 import Navbar from "./navbar.js"
 import Dropdown from "react-bootstrap/Dropdown"
-import {getReceipts, getReceiptsByProduct,getReceiptsByName,getReceiptsByDate} from "./receiptAPI.js"
+
 import { useState, useEffect } from "react"
-
-const { ipcRenderer } = window
-/*
-const {app} = window.require('electron');
-const Datastore = window.require('nedb');
-
-var db = new Datastore({ filename: 'receiptDB.db', autoload: true });
-db.loadDatabase();
-*/
 
 
 
 const ReceiptHistory = () => {
     const [data, setData] = useState([])
     const [searchType, setSearchType] = useState("")
-    
-    const testDatabase = () => {
+    async function getData(){
+        const message = await database.getAll()
+        setData(message)
         
-    }
+       
+      }
+    
     
     const insert = () => {
-        console.log(window.electron.sendNotification("hello world"))
-        /*
-        var doc = { name: 'world',
-                    age: 23
-                   };
-         db.insert(doc)
-         db.find({name: 'world'})
-         console.log()
-         */
-    }
-    /*
-    const find = () =>{
-        db.find({name: {$exists: true}}, (err, docs)=>{
-        console.log(docs)
-        setData([docs])
-        console.log("result: ",data)
-          });
         
     }
-    */
+    async function getDataByProduct(productVal){
+           const message = await database.searchForProduct(productVal)
+           setData(message)
+    }
+    async function getDataByName(nameVal){
+        const message = await database.searchForName(nameVal)
+        setData(message)
+ }
+ async function getDataByDate(dateVal){
+    const message = await database.searchForDate(dateVal)
+    setData(message)
+ }
     useEffect(() =>{
-      
-       /*
-        getReceipts(receiptData =>{
-           setData(receiptData['ReceiptOrders'])
-           console.log(receiptData['ReceiptOrders'])
-            
-        })
-        */
+      getData()
+       
         
         
     },[])
@@ -60,24 +42,20 @@ const ReceiptHistory = () => {
     const searchItem = () =>{
         if(searchType === "Producto"){
              var productVal = document.getElementById("input").value
-             console.log(productVal)
-             getReceiptsByProduct(productVal, productResult =>{
-                setData(productResult['ReceiptOrders'])
-                console.log(data)
-             })
-             console.log(productVal)
+             console.log(data)
+             getDataByProduct(productVal)
         }
         if(searchType === "Nombre"){
             var nameVal = document.getElementById("input").value
             console.log(nameVal)
-            getReceiptsByName(nameVal, nameResult =>{
-               setData(nameResult['ReceiptOrders'])
-               console.log(data)
-            })
-            console.log(productVal)
+            getDataByName(nameVal)
         }
         if(searchType === "Fecha"){
-
+            var dateVal = document.getElementById("input").value
+            console.log(dateVal)
+            
+            
+            getDataByDate(dateVal)
         }
     }    
     
@@ -112,8 +90,12 @@ const ReceiptHistory = () => {
 
                             </Dropdown.Menu>
                         </Dropdown>
+                        {searchType == "Fecha" ? (
+                                 <div>
+                                         <input type="text" class="form-control" id="input" name="inputVal" placeholder="Usa el formato MM/DD/YYYY"/>
+                                 </div>
+                        ):<input type="text" class="form-control" id="input" name="inputVal"/>}
                         
-                        <input type="text" class="form-control" id="input" name="inputVal"/>
                         
                         <button type="button" class="btn btn-primary" onClick={() => searchItem()}> Ingresar </button>
                     </div>
@@ -132,12 +114,12 @@ const ReceiptHistory = () => {
                             <thead>
                                 <tr>
                                     
-                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Order ID</th>
-                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Nombre de Cliente</th>
-                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Unidades</th>
-                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Producto</th>
-                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Precio</th>
-                                    <th scope="col" style={{ width: "700px", fontSize: "36px" }}> Fecha de Compra</th>
+                                    <th scope="col" style={{ width: "700px", fontSize: "24px" }}> Order ID</th>
+                                    <th scope="col" style={{ width: "700px", fontSize: "24px" }}> Nombre de Cliente</th>
+                                    <th scope="col" style={{ width: "700px", fontSize: "24px" }}> Unidades</th>
+                                    <th scope="col" style={{ width: "700px", fontSize: "24px" }}> Producto</th>
+                                    <th scope="col" style={{ width: "700px", fontSize: "24px" }}> Precio</th>
+                                    <th scope="col" style={{ width: "700px", fontSize: "24px" }}> Fecha de Compra</th>
                                    
                                   
                                 </tr>
@@ -149,14 +131,16 @@ const ReceiptHistory = () => {
                                  </div>
                             ):null}
                             {data.map((val) => (
-                                    <tr key={val.OrderID}>
-                                        <td>{val.OrderID}</td>
-                                        <td>{val.ReceiptName}</td>
-                                        <td>{val.Quantity}</td>
-                                        <td>{val.Product}</td>
-                                        <td>{val.Price}</td>
-                                        <td>{val.Date}</td>
-                                    </tr>
+                                     <tr key={val._id}>
+                                     <td>{val._id}</td>
+                                     <td>{val.ordername}</td>
+                                     <td>{val.quantity}</td>
+                                     <td>{val.product}</td>
+                                     <td>{val.price}</td>
+                                     <td>{val.date}</td>
+                                     
+                                     
+                                 </tr>
                                 ))}
                             
                             </tbody>
@@ -165,7 +149,7 @@ const ReceiptHistory = () => {
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary"> <Link to="/" style={{ color: "white", fontSize: "25px", textDecoration: "none" }}> Atras </Link></button> <br/>
+           
            
             
             

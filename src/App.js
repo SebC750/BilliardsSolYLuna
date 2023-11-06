@@ -3,7 +3,7 @@ import './PageStyle.css';
 import MainPage from './pages/mainpage'
 import ReceiptHistory from './pages/receiptHistory'
 import React from 'react';
-import "../src/pages/renderer.js"
+
 function App() {
   return (
     <div className="App">

@@ -26,25 +26,33 @@ function createWindow () {
       preload:  path.join(__dirname,'preload.js')
     },
   })
-     /*
-    db.find({} ,(err,docs) =>{
-      //console.log(docs)
-      string = "this is a message"
-      docs.map((val) =>{
-              
-        resultArray.push({n: val.name, a: val.age})
-      })
-      
-       
-       return resultArray
-    })
-    return resultArray
-     */
+    
   //load the index.html from a url
   win.loadFile(path.join(__dirname, '/public/index.html'));
 
   ipcMain.handle('get-all', async () =>{
     const getAllDatabaseValues = await db.find({})
+    
+    
+    
+    return getAllDatabaseValues
+  })
+  ipcMain.handle('get-product', async (err, data) =>{
+    const getAllDatabaseValues = await db.find({product: data})
+    
+    
+    
+    return getAllDatabaseValues
+  })
+  ipcMain.handle('get-name', async (err, data) =>{
+    const getAllDatabaseValues = await db.find({ordername: data})
+    
+    
+    
+    return getAllDatabaseValues
+  })
+  ipcMain.handle('get-date', async (err, data) =>{
+    const getAllDatabaseValues = await db.find({date: data})
     
     
     

@@ -9,6 +9,7 @@ import {
   Container,
   Jumbotron,
 } from "react-bootstrap";
+import Dropdown from "react-bootstrap/Dropdown"
 import Table1 from "./Table1.js"
 
 import Table2 from "./Table2.js"
@@ -23,20 +24,38 @@ import ItemArray from "./items.js"
 const MainPage = () => {
   const [itemList, setItemList] = useState(ItemArray)
   const [receiptModal, openReceiptModal] = useState(false)
-  const [data, setData] = useState([])
-  
+  const [orderList, addOrderList] = useState([])
+  const [openReceiptList, showOpenReceiptList] = useState(false)
+  const [addItemPrompt, setAddItemPrompt] = useState(false)
+  const [itemSelection, setItemSelection] = useState([{ in: "", p: 0 }])
+  const addOrder = () =>{
+    setAddItemPrompt(false)
+    /*
+        var quantityNum = document.getElementById("quantityInput").value;
+        var orderId = Math.floor(Math.random() * 10000)+1000;
+        console.log(orderId)
+        var name = document.getElementById("nameInput").value
+        console.log(orderId)
+    */    
+        console.log("hello!")
+  }
+  const closeAddOrderModal = () =>{
+    setAddItemPrompt(false)
+  }
   const closeModal = () =>{
     openReceiptModal(false)
   }
-  async function getData(){
-    const message = await database.getAll()
-    setData(message)
-    console.log(data)
-   
-  }
   
+ 
   const addReceipt = () =>{
-    
+    var name = document.getElementById("nameInput").value
+    if(orderList.length < 1){
+       showOpenReceiptList(true)
+    }
+    var orderDate = new Date()
+    orderList.push({name: name, date: orderDate.getDate(), order: []})
+    console.log(orderList)
+    openReceiptModal(false)
   }
   useEffect(() =>{
     
@@ -45,7 +64,7 @@ const MainPage = () => {
     <div>
      
       <Navbar></Navbar>
-      {console.log(data[0])}
+     
       <div class="tables">
           <div class="table1">
             <div class="row">
@@ -59,7 +78,35 @@ const MainPage = () => {
               <h3> Otros Recibos </h3> 
               </div>
               <div class="other-receipt-body">
+              {openReceiptList ? (  
+                 
+                   <div align="center">
+                    {orderList.map((val) =>(
+                  <div class="table">
+                  
+                      <h3> {val.name} </h3>
+                    
+                      
+                      <thead>
+                        <tr>
+                                            <th scope="col"> ID</th>
+                                            <th scope="col"> Unidades</th>
+                                            <th scope="col"> Producto</th>
+                                            <th scope="col"> Precio</th>
+                        </tr>
+                        
+                      </thead>
+                      <tbody>
+                       
+                        
+                      
+                      </tbody>
+                      <button type="button" class="btn btn-primary" onClick={() => setAddItemPrompt(true)}> Anadir Compra </button>
+                  </div>
+                  ))}
+                </div>
               
+            ):<p> No hay recibos activos en este momento. </p>}
               
               <button type="button" class="btn btn-primary" onClick={() => openReceiptModal(true)}> Agregar nuevo recibo </button>
               {receiptModal ? (
@@ -83,8 +130,8 @@ const MainPage = () => {
                                        
                                         </div>
                                         <div class="col">
-                                            <label for="nameInput"> Nombre de recibo </label>
-                                            <input type="number" class="form-control" id="nameInput"></input>
+                                            <label htmlFor="nameInput"> Nombre de recibo </label>
+                                            <input type="text" class="form-control" id="nameInput"></input>
                                         </div>
                                     </div>
                                 </div>
@@ -106,37 +153,62 @@ const MainPage = () => {
       </div>
       
        
-       <div id="test"> <button type="button" class="btn btn-primary" onClick={() => getData()}> Show data</button></div>
        
-       <div align="center">
-                                <div class="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col"> ID</th>
-                                            <th scope="col"> Name</th>
-                                            <th scope="col"> Age</th>
-                                            
-
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {data.map((val) => (
-                                            <tr key={val._id}>
-                                                <td>{val._id}</td>
-                                                <td>{val.name}</td>
-                                                <td>{val.age}</td>
-                                                
-                                                
-                                                
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                    
-                                </div>
-                            </div>
+       
+       
        
          
-      
+      {addItemPrompt ? (
+                            <div>
+                                <Modal
+                                    show={true}
+                                    size="lg"
+                                    aria-labelledby="contained-modal-title-vcenter"
+                                    centered
+
+                                >
+                                    <Modal.Header >
+                                        <Modal.Title id="contained-modal-title-vcenter"> Anadir Compra</Modal.Title>
+
+                                    </Modal.Header>
+                                    <Modal.Body className="px-5">
+                                        <div class="form-group">
+                                            <div class="form-row">
+                                                <div class="col">
+                                                    <Dropdown>
+                                                        <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                                            Escoger producto
+                                                        </Dropdown.Toggle>
+                                                        <Dropdown.Menu>
+                                                            {itemList.map((val) => (
+                                                                <div key={val.item_id}>
+                                                                    <Dropdown.Item onClick={() => setItemSelection([{ in: val.item_name, p: val.item_price }])}> {val.item_name} {val.item_price}</Dropdown.Item>
+
+                                                                </div>
+
+                                                            ))}
+
+                                                        </Dropdown.Menu>
+                                                    </Dropdown>
+                                                    
+                                                </div>
+                                                <div class="col">
+                                                    <label for="quantityInput"> Cantidad </label>
+                                                    <input type="number" class="form-control" id="quantityInput"></input>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        <button type="button" class="btn btn-primary" onClick={() => closeAddOrderModal()}> Close </button>
+                                        <button type="button" class="btn btn-primary" onClick={() => addOrder()}> Submit </button>
+
+                                    </Modal.Footer>
+                                </Modal>
+                            </div>
+                        ) : null}
       
     </div>
   );

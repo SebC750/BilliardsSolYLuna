@@ -1,6 +1,3 @@
-{"name":"world","age":23,"_id":"5D970ER9QzPNMqQG"}
-{"name":"world","age":23,"_id":"944552CoxLWYwxim"}
-{"name":"world","age":23,"_id":"KOQSAIbKN3jzrzDZ"}
-{"name":"world","age":23,"_id":"MwYH4b5yaPvCNJtr"}
-{"name":"world","age":23,"_id":"OwMPBoFrKJczjuoc"}
-{"name":"world","age":23,"_id":"otPgq4K8sGH8LIZS"}
+{"ordername":"Jason","quantity":"1","product":"cerveza","price":"6","date":"11/05/2023","_id":"5D970ER9QzPNMqQG"}
+{"ordername":"Kevin","quantity":"1","product":"cubeta","price":"30","date":"11/05/2023","_id":"944552CoxLWYwxim"}
+{"ordername":"Sarah","quantity":"1","product":"bocadillo","price":"2","date":"11/06/2023","_id":"KOQSAIbKN3jzrzDZ"}

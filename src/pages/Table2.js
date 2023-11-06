@@ -36,12 +36,13 @@ const Table2 = ({ data }) => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
         var orderId = Math.floor(Math.random() * 10000) + 1000;
-
-
+        var name = document.getElementById("nameInput").value
+        console.log(orderId)
+        
         {
             itemSelection.map((val) => {
-                itemPurchaseList.push({ id: orderId, quantity: quantityNum, item: val.in, price: val.p * quantityNum })
-
+                itemPurchaseList.push({ id: orderId, name: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum })
+                
             })
 
         }
@@ -207,6 +208,7 @@ const Table2 = ({ data }) => {
                                             <thead>
                                                 <tr>
                                                     <th scope="col"> ID</th>
+                                                    <th scope="col"> Nombre</th>
                                                     <th scope="col"> Unidades</th>
                                                     <th scope="col"> Producto</th>
                                                     <th scope="col"> Precio</th>
@@ -217,9 +219,10 @@ const Table2 = ({ data }) => {
                                                 {itemPurchaseList.map((val) => (
                                                     <tr key={val.id}>
                                                         <td>{val.id}</td>
-                                                        <td>{val.quantity}</td>
-                                                        <td>{val.item}</td>
-                                                        <td>$ {val.price}</td>
+                                                <td>{val.name}</td>
+                                                <td>{val.quantity}</td>
+                                                <td>{val.item}</td>
+                                                <td>$ {val.price}</td>
                                                         <button type="button" class="btn btn-danger" onClick={() => removeItem(val.id)}> Cancelar </button>
 
                                                     </tr>
@@ -263,11 +266,13 @@ const Table2 = ({ data }) => {
 
                                                         </Dropdown.Menu>
                                                     </Dropdown>
-                                                    <p> {itemSelection[0].in}</p>
+                                                    
                                                 </div>
                                                 <div class="col">
                                                     <label for="quantityInput"> Cantidad </label>
                                                     <input type="number" class="form-control" id="quantityInput"></input>
+                                                    <label for="nameInput"> Nombre de cliente </label>
+                                            <input type="text" class="form-control" id="nameInput"></input>
                                                 </div>
                                             </div>
                                         </div>
