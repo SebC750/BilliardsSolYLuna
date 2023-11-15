@@ -61,7 +61,7 @@ function createWindow () {
   })
   ipcMain.handle('insert-receipt', async (err, data) =>{
     db.insert(data, function(err, newData){
-      console.log(data)
+      console.log(newData)
     })
     
     
@@ -69,11 +69,13 @@ function createWindow () {
     return "order saved to db"
   })
   ipcMain.handle('delete-receipt', async (err, data) =>{
-    const deleteReceipt = await db.remove({_id: data})
+    db.remove({_id: data}, function(err, newData){
+      console.log(newData)
+    })
     
     
     
-    return deleteReceipt
+    return "order removed from db"
   })
   // Open the DevTools.
   win.webContents.openDevTools()

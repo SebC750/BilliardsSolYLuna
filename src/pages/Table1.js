@@ -32,17 +32,23 @@ const Table1 = ({ data }) => {
     const [tablePrice, setTablePrice] = useState(0)
     const [totalPrice, setTotalPrice] = useState(0)
     const [totalTimeElapsed,setTotalTimeElapsed] = useState("")
-    
+    const [errorMessage, showErrorMessage] = useState(false)
    
     async function archiveOrderToDB(data){
         const message = await database.insertReceipt(data)
         console.log(message)
         }
     const addPurchase = () => {
-        setAddItemPrompt(false)
+        
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 10000) + 1000;
+        var orderId = Math.floor(Math.random() * 1000000) + 1000;
         var name = document.getElementById("nameInput").value
+        if(quantityNum.length < 1 || name.length < 1){
+            showErrorMessage(true)
+        }
+        
+        else {
+            setAddItemPrompt(false)
         console.log(orderId)
         var orderDate = new Date()
         var orderDay = ""+orderDate.getDate()
@@ -59,7 +65,7 @@ const Table1 = ({ data }) => {
             })
 
         }
-
+    }
 
     }
     const closeModal = () => {
@@ -287,6 +293,9 @@ const Table1 = ({ data }) => {
                                             <input type="number" class="form-control" id="quantityInput"></input>
                                             <label for="nameInput"> Nombre de cliente </label>
                                             <input type="text" class="form-control" id="nameInput"></input>
+                                            {errorMessage ? (
+                                                    <p style={{color: "red", fontSize: "12px"}}> Por favor ingresar toda la informacion requerida. </p>
+                                                ):null}
                                         </div>
                                     </div>
                                 </div>

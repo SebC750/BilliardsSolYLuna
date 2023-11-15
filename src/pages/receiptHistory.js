@@ -9,6 +9,8 @@ import { useState, useEffect } from "react"
 const ReceiptHistory = () => {
     const [data, setData] = useState([])
     const [searchType, setSearchType] = useState("")
+    const [errorMessage, showErrorMessage] = useState(false)
+
     async function getData(){
         const message = await database.getAll()
         setData(message)
@@ -17,9 +19,7 @@ const ReceiptHistory = () => {
       }
     
     
-    const insert = () => {
-        
-    }
+    
     async function getDataByProduct(productVal){
            const message = await database.searchForProduct(productVal)
            setData(message)
@@ -38,22 +38,32 @@ const ReceiptHistory = () => {
         
         
     },[])
-       
+    const checkDate = (date) =>{
+      var regex = /^\d{1,2}\/\d{1,2}\/\d{4}$/
+
+
+    }   
     const searchItem = () =>{
         if(searchType === "Producto"){
              var productVal = document.getElementById("input").value
+             if(productVal.length < 1){
+                showErrorMessage(true)
+             }
              console.log(data)
              getDataByProduct(productVal)
         }
         if(searchType === "Nombre"){
             var nameVal = document.getElementById("input").value
+            if(nameVal.length < 1){
+                showErrorMessage(true)
+             }
             console.log(nameVal)
             getDataByName(nameVal)
         }
         if(searchType === "Fecha"){
             var dateVal = document.getElementById("input").value
             console.log(dateVal)
-            
+            const isValidDate = checkDate(dateVal)
             
             getDataByDate(dateVal)
         }
@@ -96,7 +106,9 @@ const ReceiptHistory = () => {
                                  </div>
                         ):<input type="text" class="form-control" id="input" name="inputVal"/>}
                         
-                        
+                        {errorMessage ? (
+                           <p style={{color:"red", fontStyle:"12px"}}> Por favor ingresar algo en la busqueda. </p>
+                        ):null}
                         <button type="button" class="btn btn-primary" onClick={() => searchItem()}> Ingresar </button>
                     </div>
                     </div>

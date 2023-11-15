@@ -29,6 +29,7 @@ const MainPage = () => {
     const [addItemPrompt, setAddItemPrompt] = useState(false)
     const [itemSelection, setItemSelection] = useState([{ in: "", p: 0 }])
     const [selectedName, setSelectedName] = useState("")
+    const [errorMessage, showErrorMessage] = useState(false)
     const openAddOrderPrompt = (name) =>{
         setAddItemPrompt(true)
         setSelectedName(name)
@@ -37,10 +38,15 @@ const MainPage = () => {
     const message = await database.insertReceipt(data)
     console.log(message)
     }
+
+    async function removeOrderFromDB(data){
+        const message = await database.deleteReceipt(data)
+        console.log(message)
+    }
     const addOrder = () => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 10000)+1000;
+        var orderId = Math.floor(Math.random() * 1000000)+1000;
         console.log(orderId)
         var orderDate = new Date()
         var orderDay = ""+orderDate.getDate()
@@ -59,17 +65,19 @@ const MainPage = () => {
         setItemSelection([{ in: "", p: 0 }])
         setSelectedName("")
     }
-    /*
+    
     const removeItem = (id, name) =>{
         console.log("name",name)
         console.log("id",id)
-        let itemArray = orderList.filter(x => x.name === name)
-        console.log(itemArray)
-        itemArray.map((val) =>{
-            val.order.filter(x => x.id !== id)
+        const newList = orderList.map((val) => {
+            return{
+                ...val,
+                order: val.order.filter(x => x.id !== id)
+            }
         })
-    }
-    */
+        removeOrderFromDB(id)
+        setOrderList(newList)
+}
     const closeAddOrderModal = () => {
         setAddItemPrompt(false)
     }
@@ -87,10 +95,16 @@ const MainPage = () => {
         if (orderList.length < 1) {
             showOpenReceiptList(true)
         }
-        
+        if(name.length < 1){
+            showErrorMessage(true)
+            
+        }
+        else {
+        showErrorMessage(false)
         orderList.push({ name: name, order: [] })
         console.log(orderList)
         openReceiptModal(false)
+        }
     }
     useEffect(() => {
        
@@ -179,7 +193,10 @@ const MainPage = () => {
 
                                                         </div>
                                                         <div class="col">
-                                                            <label htmlFor="nameInput"> Nombre de recibo </label>
+                                                            <label htmlFor="nameInput" style={{fontSize: "20px"}}> Nombre de recibo </label>
+                                                            {errorMessage ? (
+                                                                <p style={{color: "red"}}> Por favor ingrese un nombre. </p>
+                                                            ):null}
                                                             <input type="text" class="form-control" id="nameInput"></input>
                                                         </div>
                                                     </div>

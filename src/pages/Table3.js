@@ -39,7 +39,7 @@ const Table3 = ({ data }) => {
     const addPurchase = () => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 10000) + 1000;
+        var orderId = Math.floor(Math.random() * 1000000) + 1000;
         var name = document.getElementById("nameInput").value
         console.log(orderId)
         var orderDate = new Date()

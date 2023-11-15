@@ -1,19 +1,18 @@
-{"ordername":"g","quantity":"1","product":"Cerveza","price":6,"date":"11/11/2023","_id":1922}
-{"ordername":"Kobe","quantity":"1","product":"Cerveza","price":6,"date":"11/11/2023","_id":2074}
-{"ordername":"Kobe","quantity":"2","product":"Bebida sin alcohol","price":10,"date":"11/11/2023","_id":2273}
-{"ordername":"Jason","quantity":"2","product":"Cerveza","price":12,"date":"11/11/2023","_id":4006}
-{"ordername":"Jaime","quantity":"1","product":"Cerveza","price":6,"date":"10/11/2023","_id":4127}
-{"ordername":"Kobe","quantity":"1","product":"Cerveza","price":6,"date":"11/11/2023","_id":4128}
-{"ordername":"j","quantity":"2","product":"Bebida sin alcohol","price":10,"date":"10/11/2023","_id":5887}
-{"ordername":"3","quantity":"3","product":"Vaso de vino","price":18,"date":"10/11/2023","_id":7192}
-{"ordername":"Nana","quantity":"1","product":"Bebida sin alcohol","price":5,"date":"10/11/2023","_id":7264}
-{"ordername":"Kobe","quantity":"1","product":"Cerveza","price":6,"date":"11/11/2023","_id":8437}
-{"ordername":"Kobe","quantity":"1","product":"Cerveza","price":6,"date":"11/11/2023","_id":8829}
-{"ordername":"k","quantity":"2","product":"Vaso de vino","price":12,"date":"10/11/2023","_id":9415}
-{"ordername":"g","quantity":"2","product":"Cerveza","price":12,"date":"10/11/2023","_id":10590}
-{"ordername":"j","quantity":"1","product":"Cerveza","price":6,"date":"10/11/2023","_id":10935}
+{"ordername":"James","quantity":"2","product":"Vaso de vino","price":12,"date":"11/14/2023","_id":1499}
+{"ordername":"j","quantity":"1","product":"Bebida sin alcohol","price":5,"date":"11/14/2023","_id":2014}
+{"ordername":"Kev","quantity":"1","product":"Bebida sin alcohol","price":5,"date":"11/14/2023","_id":2164}
+{"ordername":"Kev","quantity":"2","product":"Vaso de vino","price":12,"date":"11/14/2023","_id":2367}
+{"ordername":"Kevin","quantity":"1","product":"Jarra Sangria","price":28,"date":"11/14/2023","_id":3590}
+{"ordername":"J","quantity":"2","product":"Vaso de vino","price":12,"date":"11/14/2023","_id":4203}
+{"ordername":"J","quantity":"1","product":"Bebida sin alcohol","price":5,"date":"11/14/2023","_id":4221}
+{"ordername":"James","quantity":"1","product":"Cerveza","price":6,"date":"11/14/2023","_id":8944}
+{"ordername":"j","quantity":"2","product":"Bebida sin alcohol","price":10,"date":"11/14/2023","_id":9854}
+{"ordername":"","quantity":"","item":"","price":0,"date":"11/14/2023","_id":210306}
+{"ordername":"","quantity":"","item":"","price":0,"date":"11/14/2023","_id":323251}
+{"ordername":"N","quantity":"1","item":"Cerveza","price":6,"date":"11/14/2023","_id":381170}
+{"ordername":"","quantity":"","item":"","price":0,"date":"11/14/2023","_id":584159}
 {"ordername":"Jason","quantity":"1","product":"cerveza","price":"6","date":"11/05/2023","_id":"5D970ER9QzPNMqQG"}
 {"ordername":"Kevin","quantity":"1","product":"cubeta","price":"30","date":"11/05/2023","_id":"944552CoxLWYwxim"}
 {"ordername":"Sarah","quantity":"1","product":"bocadillo","price":"2","date":"11/06/2023","_id":"KOQSAIbKN3jzrzDZ"}
-{"ordername":"Jaime","quantity":"1","item":"Cerveza","price":6,"date":"10/11/2023","id":6318,"_id":"ljp1j9NeUtXO7vEZ"}
-{"ordername":"j","quantity":"1","product":"Cerveza","price":6,"date":"11/14/2023","_id":1935}
+{"ordername":"h","quantity":"1","product":"Bebida sin alcohol","price":5,"date":"11/14/2023","_id":57830}
+{"$$deleted":true,"_id":57830}
