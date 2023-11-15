@@ -32,18 +32,28 @@ const Table3 = ({ data }) => {
     const [totalTimeElapsed,setTotalTimeElapsed] = useState("")
     
 
+    async function archiveOrderToDB(data){
+        const message = await database.insertReceipt(data)
+        console.log(message)
+        }
     const addPurchase = () => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 10000)+1000;
-        console.log(orderId)
+        var orderId = Math.floor(Math.random() * 10000) + 1000;
         var name = document.getElementById("nameInput").value
         console.log(orderId)
+        var orderDate = new Date()
+        var orderDay = ""+orderDate.getDate()
         
+        if(orderDate.getDate() < 10)
+        {
+            orderDay = "0"+orderDate.getDate()
+        }
+        var dateString = (orderDate.getMonth()+1)+"/"+orderDay+"/"+orderDate.getFullYear();
         {
             itemSelection.map((val) => {
                 itemPurchaseList.push({ id: orderId, name: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum })
-                
+                archiveOrderToDB({  ordername: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum, date: dateString, _id: orderId })
             })
 
         }
@@ -182,7 +192,7 @@ const Table3 = ({ data }) => {
                                 <span> {("0" + Math.floor((time / 1) % 60)).slice(-2)}</span>
                             </h3>
                             {endTime ? (
-                                <h3> End time: {endTime}</h3>
+                                <h3> Tiempo Terminado: {endTime}</h3>
                             ) : null}
                             {showEndButton ? (
                                 <button type="button" class="btn btn-primary" onClick={() => stopTimer()}> Stop time</button>

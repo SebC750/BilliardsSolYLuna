@@ -5,7 +5,7 @@ const Datastore = require('nedb-promises');
 
 var db = Datastore.create({ filename: 'receiptDB.db', autoload: true });
 db.load();
-
+/*
 var isDev = true;
 
 if (isDev) {
@@ -13,6 +13,7 @@ if (isDev) {
     electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
   })
 }
+*/
 function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
@@ -59,11 +60,13 @@ function createWindow () {
     return getAllDatabaseValues
   })
   ipcMain.handle('insert-receipt', async (err, data) =>{
-    const insertReceipt = await db.insert(data)
+    db.insert(data, function(err, newData){
+      console.log(data)
+    })
     
     
     
-    return insertReceipt
+    return "order saved to db"
   })
   ipcMain.handle('delete-receipt', async (err, data) =>{
     const deleteReceipt = await db.remove({_id: data})
