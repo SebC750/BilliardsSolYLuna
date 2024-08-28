@@ -35,19 +35,19 @@ const MainPage = () => {
         setSelectedName(name)
     }
     async function archiveOrderToDB(data){
-    const message = await database.insertReceipt(data)
+    const message = await window.database.insertReceipt(data)
     console.log(message)
     }
 
     async function removeOrderFromDB(data){
-        const message = await database.deleteReceipt(data)
+        const message = await window.database.deleteReceipt(data)
         console.log(message)
     }
     const addOrder = () => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 1000000)+1000;
-        console.log(orderId)
+        
+        
         var orderDate = new Date()
         var orderDay = ""+orderDate.getDate()
         
@@ -59,8 +59,8 @@ const MainPage = () => {
         
         let nameArray = orderList.filter(x => x.name === selectedName)
         {nameArray.map((val) =>  (
-            val.order.push({ id: orderId, quantity: quantityNum, item: itemSelection[0].in, price: itemSelection[0].p * quantityNum,  date: dateString}),
-            archiveOrderToDB({ordername: val.name, quantity: quantityNum, product: itemSelection[0].in, price: itemSelection[0].p * quantityNum,  date: dateString, _id: orderId})   
+            val.order.push({quantity: quantityNum, item: itemSelection[0].in, price: itemSelection[0].p * quantityNum,  date: dateString}),
+            archiveOrderToDB({item: itemSelection[0].in, quantity: quantityNum, price: itemSelection[0].p * quantityNum})   
                 ))}
         setItemSelection([{ in: "", p: 0 }])
         setSelectedName("")
@@ -77,7 +77,10 @@ const MainPage = () => {
         })
         removeOrderFromDB(id)
         setOrderList(newList)
-}
+}   
+    const markPurchaseAsPaid = () =>{
+        
+    }
     const closeAddOrderModal = () => {
         setAddItemPrompt(false)
     }
@@ -121,8 +124,11 @@ const MainPage = () => {
                             <Table2 data={itemList}></Table2>
                             <Table1 data={itemList}></Table1>
                         </div>
-                        <div class="col-md">
-                            <Table3 data={itemList}></Table3>
+                        <div className="col-md">
+                        <Table3 data={itemList}></Table3>
+                        </div>
+                            
+                            <div >
                             <div class="other-receipt-title">
                                 <h3> Otros Recibos </h3>
                             </div>
@@ -131,9 +137,9 @@ const MainPage = () => {
 
                                     <div align="center">
                                         {orderList.map((val) => (
-                                            <div class="other-receipt-borders">
-                                            <div class="table">
-
+                                            
+                                            
+                                            <table>
                                                 <h3> {val.name} </h3>
 
 
@@ -163,8 +169,9 @@ const MainPage = () => {
                                                 </tbody>
                                                 <button type="button" class="btn btn-primary" onClick={() => openAddOrderPrompt(val.name)}> Anadir Compra </button>
                                                 <button type="button" class="btn btn-warning" onClick={() => removeReceipt(val.name)}> Remover recibo</button>
-                                            </div>
-                                            </div>
+                                                </table>
+                                            
+                                          
                                         ))}
                                         
                                     </div>

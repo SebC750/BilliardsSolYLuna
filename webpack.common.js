@@ -45,13 +45,15 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.js'],
+    extensions: ['.js','jsx'],
   },
   output: {
     filename: 'app.js',
     path: path.resolve(__dirname, 'build', 'js'),
+    publicPath: './',
   },
-  externals: {
-    "nedb": 'commonjs nedb',
- },
+  devServer: {
+    contentBase: path.join(__dirname, 'public'), 
+    publicPath: '/',
+  },
 };

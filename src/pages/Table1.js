@@ -35,7 +35,7 @@ const Table1 = ({ data }) => {
     const [errorMessage, showErrorMessage] = useState(false)
    
     async function archiveOrderToDB(data){
-        const message = await database.insertReceipt(data)
+        const message = await window.database.insertReceipt(data)
         console.log(message)
         }
     const addPurchase = () => {

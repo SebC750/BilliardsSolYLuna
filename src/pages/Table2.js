@@ -32,7 +32,7 @@ const Table2 = ({ data }) => {
     const [totalTimeElapsed, setTotalTimeElapsed] = useState("")
     const [errorMessage, showErrorMessage] = useState(false)
     async function archiveOrderToDB(data){
-        const message = await database.insertReceipt(data)
+        const message = await window.database.insertReceipt(data)
         console.log(message)
         }
     const addPurchase = () => {

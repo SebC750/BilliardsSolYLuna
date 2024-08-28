@@ -33,7 +33,7 @@ const Table3 = ({ data }) => {
     
 
     async function archiveOrderToDB(data){
-        const message = await database.insertReceipt(data)
+        const message = await window.database.insertReceipt(data)
         console.log(message)
         }
     const addPurchase = () => {
