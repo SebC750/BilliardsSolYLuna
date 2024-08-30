@@ -60,7 +60,7 @@ const MainPage = () => {
         let nameArray = orderList.filter(x => x.name === selectedName)
         {nameArray.map((val) =>  (
             val.order.push({ id: orderId, quantity: quantityNum, item: itemSelection[0].in, price: itemSelection[0].p * quantityNum,  date: dateString}),
-            archiveOrderToDB({ordername: val.name, quantity: quantityNum, product: itemSelection[0].in, price: itemSelection[0].p * quantityNum,  date: dateString, _id: orderId})   
+            archiveOrderToDB({ordername: val.name, quantity: quantityNum, product: itemSelection[0].in, price: itemSelection[0].p * quantityNum, status: "sin pagar", date: dateString})   
                 ))}
         setItemSelection([{ in: "", p: 0 }])
         setSelectedName("")
@@ -106,9 +106,7 @@ const MainPage = () => {
         openReceiptModal(false)
         }
     }
-    useEffect(() => {
-       
-    })
+    
     return (
         <div>
 

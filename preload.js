@@ -11,6 +11,7 @@ let dbOperations = {
    insertReceipt: (data) => ipcRenderer.invoke('insert-receipt', data),
    deleteReceipt: (data) => ipcRenderer.invoke('delete-receipt', data),
    updateReceipt: (data) => ipcRenderer.invoke('update-receipt', data), 
+   markOrderAsPaid: (data) => ipcRenderer.invoke('mark-order-as-paid', data),
 }
 
 

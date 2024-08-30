@@ -5,20 +5,13 @@ const Datastore = require('nedb-promises');
 
 var db = Datastore.create({ filename: 'receiptDB.db', autoload: true });
 db.load();
-/*
-var isDev = true;
 
-if (isDev) {
-  require('electron-reload')(__dirname, {
-    electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-  })
-}
-*/
+
 function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 1200,
-    height: 1200,
+    height: 1600,
     webPreferences: {
       nodeIntegration: false,
       enableRemoteModule: false,
@@ -29,7 +22,7 @@ function createWindow () {
   })
     
   //load the index.html from a url
-  win.loadFile(path.join(__dirname, '/public/index.html'));
+  win.loadFile(path.join(__dirname, 'public','index.html'));
 
   ipcMain.handle('get-all', async () =>{
     const getAllDatabaseValues = await db.find({})
@@ -76,6 +69,12 @@ function createWindow () {
     
     
     return "order removed from db"
+  })
+  ipcMain.handle('mark-order-as-paid', async(err, data) => {
+    db.update({_id: data['id']},{status: "Cancelado"}, function(err, newData) {
+      console.log(newData)
+    })
+    return "order set to paid."
   })
   // Open the DevTools.
   win.webContents.openDevTools()

@@ -5,7 +5,9 @@ module.exports = {
   entry: './src/index.js',
   devtool: 'inline-source-map',
   target: 'electron-renderer',
+  
   module: {
+    
     rules: [
       {
         test: /\.js$/,
@@ -23,10 +25,11 @@ module.exports = {
           }
         }
       },
+      
       {
         test: [/\.s[ac]ss$/i, /\.css$/i],
         use: [
-          // Creates `style` nodes from JS strings
+          // Creates style nodes from JS strings
           'style-loader',
           // Translates CSS into CommonJS
           'css-loader',
@@ -39,6 +42,11 @@ module.exports = {
         use: [
           {
             loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'images',
+              publicPath: 'js/images', 
+            },
           },
         ],
       }
@@ -46,12 +54,16 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js'],
+    
   },
   output: {
     filename: 'app.js',
-    path: path.resolve(__dirname, 'build', 'js'),
+    path: path.resolve(__dirname, 'public', 'js'),
+    publicPath: 'js/',
   },
-  externals: {
-    "nedb": 'commonjs nedb',
- },
-};
+  
+    externals: {
+      "nedb": 'commonjs nedb',
+   },
+  
+}; 

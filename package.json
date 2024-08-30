@@ -21,7 +21,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.17.0",
     "react-scripts": "5.0.1",
-    "sqlite-electron": "^2.2.8",
+    
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -30,8 +30,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron-dev": "electron .",
-    "electron": "electron .",
-    "watch": "webpack --config webpack.common.js --watch"
+   
+    "electron": "webpack --config webpack.common.js && node preprocess_webpack.js && electron ."
   },
   "eslintConfig": {
     "extends": [
