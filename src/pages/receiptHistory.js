@@ -1,21 +1,46 @@
 import { Link } from "react-router-dom"
 import Navbar from "./navbar.js"
 import Dropdown from "react-bootstrap/Dropdown"
-
+import Modal from "react-bootstrap/Modal"
+import Pagination from "react-bootstrap/Pagination"
+import PageNavigator from "./pageNavigator.js"
 import { useState, useEffect } from "react"
 
 
 
-const ReceiptHistory = ({allData}) => {
+const ReceiptHistory = () => {
     const [data, setData] = useState([])
     const [searchType, setSearchType] = useState("")
     const [errorMessage, showErrorMessage] = useState(false)
     const [openMarkAsPaidModal, setOpenMarkAsPaidModal] = useState(false)
     const [selectedOrder, setSelectedOrder] = useState(null)
+    const [isChanged, setIsChanged] = useState(false)
+    const [page, setPage] = useState(1)
+    const totalPages = Math.ceil(data.length / 5)
+    const indexOfLastPage = data.length*5
+    const indexOfFirstPage = indexOfLastPage - 5
+    var ordersShownOnTable = data.slice(indexOfFirstPage, indexOfLastPage);
+
+    const onPageChange = (page) =>{
+        setPage(page)
+    }
+    async function getData(){
+        const getdata = await database.getAll();
+        console.log(getdata)
+        setData(getdata)
+    }
     
+    
+    useEffect(() =>{
+        getData()
+    },[isChanged])
     async function updateOrderPaidStatus(){
+        
+        console.log(selectedOrder)
         const message = await database.changeOrderStatus(selectedOrder)
         console.log(message)
+        setIsChanged(true)
+        getData()
     }
     async function getDataByStatus() {
         const message = await database.searchForUnpaidOrders()
@@ -129,7 +154,7 @@ const ReceiptHistory = ({allData}) => {
 
                 <div align="center">
                     <div class="history-table-style" >
-                        <div class="table" style={{ width: "1000px" }}>
+                        <table class="table" style={{ width: "1000px" }}>
                             <thead>
                                 <tr>
 
@@ -149,7 +174,7 @@ const ReceiptHistory = ({allData}) => {
                                         <p> Loading </p>
                                     </div>
                                 ) : null}
-                                {allData.map((val) => (
+                                {ordersShownOnTable.map((val) => (
                                     <tr key={val._id}>
                                         <td>{val._id}</td>
                                         <td>{val.ordername}</td>
@@ -160,7 +185,7 @@ const ReceiptHistory = ({allData}) => {
                                         {val.status === "sin pagar" ?
                                             (<div> <td style={{ color: "red" }}>{val.status}</td>
                                                 <td>
-                                                    <button type="button" className="btn btn-danger" onClick={() => openPaidModal(true)}> Cancelar </button>
+                                                    <button type="button" className="btn btn-danger" onClick={() => openPaidModal(val._id)}> Cancelar </button>
                                                 </td> </div>) :
                                             <td style={{ color: "green" }}>{val.status}</td>
                                         }
@@ -171,23 +196,31 @@ const ReceiptHistory = ({allData}) => {
 
                             </tbody>
 
-                        </div>
+                        </table>
+                        <div>
+
+            <PageNavigator totalPages={totalPages} currentPage={page} onPageChange={onPageChange} data={data}/>
+        </div>
                     </div>
                 </div>
             </div>
             {openMarkAsPaidModal ? (
-                <Modal>
-                    <ModalTitle> Estas seguro?</ModalTitle>
-                    <ModalBody>
+                <Modal
+                show={true}
+                        size="lg"
+                        aria-labelledby="contained-modal-title-vcenter"
+                        centered>
+                    <Modal.Title> Estas seguro?</Modal.Title>
+                    <Modal.Body>
                         <p> Estas seguro de que quieres cancelar esta orden?</p>
-                    </ModalBody>
-                    <ModalFooter>
+                    </Modal.Body>
+                    <Modal.Footer>
                         <button type="button" className="btn btn-primary" onClick={() => setOpenMarkAsPaidModal(false)}> No, atras</button>
                         <button type="button" className="btn btn-primary" onClick={() => markOrderAsPaid()}> Si, ya esta pagado</button>
-                    </ModalFooter>
+                    </Modal.Footer>
                 </Modal>
             ) : null}
-
+            
 
 
 

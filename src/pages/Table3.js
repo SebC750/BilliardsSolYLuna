@@ -78,7 +78,7 @@ const Table3 = ({ data }) => {
         itemPurchaseList.forEach((val) => {
             total += val.price;
         });
-
+        
         console.log(time);
 
         var tablePrice = (20 * h) + (20 / 60 * m) + (20 / 3600 * s);

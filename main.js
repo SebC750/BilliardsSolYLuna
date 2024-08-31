@@ -71,7 +71,7 @@ function createWindow () {
     return "order removed from db"
   })
   ipcMain.handle('mark-order-as-paid', async(err, data) => {
-    db.update({_id: data['id']},{status: "Cancelado"}, function(err, newData) {
+    db.update({_id: data},{$set:{status: "cancelado"}}, function(err, newData) {
       console.log(newData)
     })
     return "order set to paid."

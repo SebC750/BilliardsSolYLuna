@@ -1,13 +1,8 @@
 import React from "react"
 import {
-    Card,
-    Button,
+    
     Modal,
-    Form,
-    Col,
-    Row,
-    Container,
-    Jumbotron,
+    
 } from "react-bootstrap";
 import Dropdown from "react-bootstrap/Dropdown"
 import Table1 from "./Table1.js"
@@ -78,8 +73,7 @@ const MainPage = () => {
     }
     
     const removeItem = (id, name) =>{
-        console.log("name",name)
-        console.log("id",id)
+        
         const newList = orderList.map((val) => {
             return{
                 ...val,
@@ -148,7 +142,7 @@ const MainPage = () => {
 
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col"> ID</th>
+                                                        
                                                         <th scope="col"> Unidades</th>
                                                         <th scope="col"> Producto</th>
                                                         <th scope="col"> Precio</th>
@@ -160,7 +154,7 @@ const MainPage = () => {
                                                     {val.order.map((x) => (
 
                                                         <tr key={x.id}>
-                                                            <td> {x.id} </td>
+                                                            
                                                             <td> {x.quantity} </td>
                                                             <td> {x.product}</td>
                                                             <td> {x.price}</td>
@@ -286,7 +280,7 @@ const MainPage = () => {
                 </div>
             ) : null}
             
-             <ReceiptHistory allData={tableData}/>
+             <ReceiptHistory />
             
             
         </div>

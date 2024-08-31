@@ -1,10 +1,10 @@
 {"ordername":"James","quantity":"2","product":"Vaso de vino","price":12,"date":"11/14/2023","status":"cancelado","_id":1499}
 {"ordername":"j","quantity":"1","product":"Bebida sin alcohol","price":5,"date":"11/14/2023","status":"cancelado","_id":2014}
-{"ordername":"Kev","quantity":"1","product":"Bebida sin alcohol","price":5,"date":"11/14/2023","status":"sin pagar","_id":2164}
+{"ordername":"Kev","quantity":"1","product":"Bebida sin alcohol","price":5,"date":"11/14/2023","status":"cancelado","_id":2164}
 {"ordername":"Kev","quantity":"2","product":"Vaso de vino","price":12,"date":"11/14/2023","status":"cancelado","_id":2367}
 {"ordername":"Kevin","quantity":"1","product":"Jarra Sangria","price":28,"date":"11/14/2023","status":"cancelado","_id":3590}
-{"ordername":"J","quantity":"2","product":"Vaso de vino","price":12,"date":"11/14/2023","status":"sin pagar","_id":4203}
+{"ordername":"J","quantity":"2","product":"Vaso de vino","price":12,"date":"11/14/2023","status":"cancelado","_id":4203}
 {"ordername":"J","quantity":"1","product":"Bebida sin alcohol","price":5,"date":"11/14/2023","status":"cancelado","_id":4221}
 {"ordername":"James","quantity":"1","product":"Cerveza","price":6,"date":"11/14/2023","status":"cancelado","_id":8944}
 {"ordername":"j","quantity":"2","product":"Bebida sin alcohol","price":10,"date":"11/14/2023","status":"cancelado","_id":9854}
-{"ordername":"Sebastian","quantity":"2","product":"Botella de Vino","price":56,"date":"8/30/2024","status":"sin pagar","_id":352143}
+
