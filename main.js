@@ -76,6 +76,11 @@ function createWindow () {
     })
     return "order set to paid."
   })
+  ipcMain.handle('search-for-unpaid-orders', async(err, data) =>{
+    const unpaidOrders = await db.find({status: "sin pagar"})
+
+    return unpaidOrders
+  })
   // Open the DevTools.
   win.webContents.openDevTools()
 }

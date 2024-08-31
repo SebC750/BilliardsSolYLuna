@@ -1,145 +1,168 @@
 .App {
   text-align: center;
 }
-.title-style{
+
+.title-style {
   color: white;
 }
 
-.jumbotron{
+.jumbotron {
   padding: 40px;
 }
-.table1-title{
+
+.table1-title {
   border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
   border-color: black;
   background-color: green;
-  color:white;
+  color: white;
   padding: 40px;
 }
-.table2-title{
+
+.table2-title {
   border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
   border-color: black;
   background-color: red;
-  color:white;
+  color: white;
   padding: 40px;
 }
-.table3-title{
+
+.table3-title {
   border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
   border-color: black;
   background-color: blue;
-  color:white;
+  color: white;
   padding: 40px;
 }
+
 .container {
-  padding-bottom:20px;
+  padding-bottom: 20px;
 }
-.navbar-styling{
+
+.navbar-styling {
   padding: 30px;
- 
+
 }
+
 .nav2 li {
   margin-right: 20px;
 }
+
 li {
   display: inline;
   margin-right: 40px;
 }
-.billiardsLogo{
+
+.billiardsLogo {
   height: 150px;
   width: 150px;
   margin-right: 15px;
 }
-.receipt-title-border{
+
+.receipt-title-border {
   border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
-background-color: green;
-  color:white;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
+  background-color: green;
+  color: white;
 }
-.receipt-body-border{
-  border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
-}
-.table-page-border{
-  border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
-}
-.receipt-title-border-red{
-  border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
-background-color: red;
-  color:white;
-}
-.receipt-title-border-blue{
-  border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
-background-color: blue;
-  color:white;
-}
-.padding{
-  margin:10px
-}
-.history-title{
-  border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
-  background-color: purple;
-  color:white;
-  padding: 40px;
-}
-.history-body{
-  border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
-}
-.history-table-style{
-  width: 100% ;
-  height: 70%;
+
+.receipt-body-border {
   border-right: 5px solid #000;
   border-left: 5px solid #000;
   border-top: 5px solid #000;
   border-bottom: 5px solid #000;
 }
-.searchBar{
-  padding-top: 15px;
-}
-.other-receipt-body{
+
+.table-page-border {
   border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
 }
-.other-receipt-title{
+
+.receipt-title-border-red {
   border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
-background-color: purple;
-  color:white;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
+  background-color: red;
+  color: white;
+}
+
+.receipt-title-border-blue {
+  border-right: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
+  background-color: blue;
+  color: white;
+}
+
+.padding {
+  margin: 10px
+}
+
+.history-title {
+  border-right: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
+  background-color: rgb(92, 86, 101);
+  color: white;
   padding: 40px;
 }
-.other-receipt-borders{
+
+.history-body {
   border-right: 5px solid #000;
-border-left: 5px solid #000;
-border-top: 5px solid #000;
-border-bottom: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
+}
+
+.history-table-style {
+  width: 100%;
+  height: 70%;
+  border-right: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
+  overflow: scroll;
+}
+
+.searchBar {
+  padding-top: 15px;
+}
+
+.other-receipt-body {
+  border-right: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
+}
+
+.other-receipt-title {
+  border-right: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
+  background-color: purple;
+  color: white;
+  padding: 40px;
+}
+
+.other-receipt-borders {
+  border-right: 5px solid #000;
+  border-left: 5px solid #000;
+  border-top: 5px solid #000;
+  border-bottom: 5px solid #000;
 }

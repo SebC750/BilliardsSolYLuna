@@ -31,28 +31,27 @@ const Table2 = ({ data }) => {
     const [totalPrice, setTotalPrice] = useState(0)
     const [totalTimeElapsed, setTotalTimeElapsed] = useState("")
     const [errorMessage, showErrorMessage] = useState(false)
-    async function archiveOrderToDB(data){
+    async function archiveOrderToDB(data) {
         const message = await database.insertReceipt(data)
         console.log(message)
-        }
+    }
     const addPurchase = () => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 1000000) + 1000;
+        var orderId = Math.floor(Math.random() * 900000000) + 100000000;
         var name = document.getElementById("nameInput").value
         console.log(orderId)
         var orderDate = new Date()
-        var orderDay = ""+orderDate.getDate()
-        
-        if(orderDate.getDate() < 10)
-        {
-            orderDay = "0"+orderDate.getDate()
+        var orderDay = "" + orderDate.getDate()
+
+        if (orderDate.getDate() < 10) {
+            orderDay = "0" + orderDate.getDate()
         }
-        var dateString = (orderDate.getMonth()+1)+"/"+orderDay+"/"+orderDate.getFullYear();
+        var dateString = (orderDate.getMonth() + 1) + "/" + orderDay + "/" + orderDate.getFullYear();
         {
             itemSelection.map((val) => {
-                itemPurchaseList.push({ id: orderId, name: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum })
-                archiveOrderToDB({  ordername: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum, date: dateString, _id: orderId })
+                itemPurchaseList.push({ name: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum })
+                archiveOrderToDB({ ordername: name, quantity: quantityNum, product: val.in, price: val.p * quantityNum, date: dateString })
             })
 
         }
@@ -64,36 +63,32 @@ const Table2 = ({ data }) => {
         setAddItemPrompt(false)
     }
     const calculateTotalPrice = () => {
-        var s = ((time/1) % 60).toFixed(0)
-        
-        var m = Math.floor(((time/60) % 60)).toFixed(0)
-        var h = Math.floor(((time/3600) % 60)).toFixed(0)
-        
-       
-            var totalTimeElapsed = "Horas "+h.toString().padStart(2,'0')+" Minutos "+m.toString().padStart(2,'0')+" Segundos "+s.toString().padStart(2,'0')
-        
-        
-        
-        setTotalTimeElapsed(totalTimeElapsed)
-        
-        
-        console.log(h+" "+m+" "+s)
-        var total = 0
-        {
-            itemPurchaseList.map((val) => {
-                total += val.price
-            })
-        }
-        console.log(time)
-        var tablePrice = (20*h)+((20/60)*m)+((20/3600)*s)
-        setTablePrice(tablePrice)
-        var totalPrice = tablePrice+total
+        var h = Math.floor(time / 3600).toFixed(0);
+        var m = Math.floor((time % 3600) / 60).toFixed(0);
+        var s = (time % 60).toFixed(0);
 
-        var salesTax = totalPrice*0.08875
-        var totalPriceWithSales = (Math.round((totalPrice+salesTax)*100)/100).toFixed(2)
-        setTotalPrice(totalPriceWithSales)
-       
-        console.log(totalPriceWithSales)
+        var totalTimeElapsed = "Horas " + h.toString().padStart(2, '0') + " Minutos " + m.toString().padStart(2, '0') + " Segundos " + s.toString().padStart(2, '0');
+
+        setTotalTimeElapsed(totalTimeElapsed);
+        console.log(h + " " + m + " " + s);
+
+        var total = 0;
+        itemPurchaseList.forEach((val) => {
+            total += val.price;
+        });
+
+        console.log(time);
+
+        var tablePrice = (20 * h) + (20 / 60 * m) + (20 / 3600 * s);
+        setTablePrice(tablePrice);
+
+        var totalPrice = tablePrice + total;
+
+        var salesTax = totalPrice * 0.08875;
+        var totalPriceWithSales = (Math.round((totalPrice + salesTax) * 100) / 100).toFixed(2);
+
+        setTotalPrice(totalPriceWithSales);
+
     }
     const stopTimer = () => {
         setShowEndButton(false)
@@ -135,20 +130,20 @@ const Table2 = ({ data }) => {
             var startDate = new Date()
             var startSeconds = startDate.getSeconds()
             var hourTo12 = startDate.getHours();
-        if (startDate.getHours() > 12) {
-            hourTo12 = startDate.getHours() - 12;
-        }
+            if (startDate.getHours() > 12) {
+                hourTo12 = startDate.getHours() - 12;
+            }
             setStartDate(hourTo12.toString().padStart(2, '0') + ":" + startDate.getMinutes().toString().padStart(2, '0') + ":" + startDate.getSeconds().toString().padStart(2, '0'))
             interval = setInterval(() => {
 
                 var elapsed = new Date().getTime() - startDate.getTime()
-                var currentTime = (startSeconds + elapsed)*0.001
+                var currentTime = (startSeconds + elapsed) * 0.001
                 console.log(Math.round(currentTime))
-                    setTime(Math.round(currentTime))
-                
-                    
-            },1000)
-            
+                setTime(Math.round(currentTime))
+
+
+            }, 1000)
+
         }
         else if (!timeStart) {
 
@@ -190,9 +185,9 @@ const Table2 = ({ data }) => {
 
                                     <h3> Start time: {startDate}</h3>
                                     <h3> Elapsed time: <br />
-                                    <span> {("0" + Math.floor((time / 3600) % 60)).slice(-2)}:</span>
-                                <span> {("0" + Math.floor((time / 60) % 60)).slice(-2)}:</span>
-                                <span> {("0" + Math.floor((time / 1) % 60)).slice(-2)}</span>
+                                        <span> {("0" + Math.floor((time / 3600) % 60)).slice(-2)}:</span>
+                                        <span> {("0" + Math.floor((time / 60) % 60)).slice(-2)}:</span>
+                                        <span> {("0" + Math.floor((time / 1) % 60)).slice(-2)}</span>
                                     </h3>
                                     {endTime ? (
                                         <h3> End time: {endTime}</h3>
@@ -226,13 +221,13 @@ const Table2 = ({ data }) => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {itemPurchaseList.map((val) => (
-                                                    <tr key={val.id}>
-                                                        <td>{val.id}</td>
-                                                <td>{val.name}</td>
-                                                <td>{val.quantity}</td>
-                                                <td>{val.item}</td>
-                                                <td>$ {val.price}</td>
+                                                {itemPurchaseList.map((val, index) => (
+                                                    <tr key={index}>
+
+                                                        <td>{val.name}</td>
+                                                        <td>{val.quantity}</td>
+                                                        <td>{val.item}</td>
+                                                        <td>$ {val.price}</td>
                                                         <button type="button" class="btn btn-danger" onClick={() => removeItem(val.id)}> Cancelar </button>
 
                                                     </tr>
@@ -276,13 +271,13 @@ const Table2 = ({ data }) => {
 
                                                         </Dropdown.Menu>
                                                     </Dropdown>
-                                                    
+
                                                 </div>
                                                 <div class="col">
                                                     <label for="quantityInput"> Cantidad </label>
                                                     <input type="number" class="form-control" id="quantityInput"></input>
                                                     <label for="nameInput"> Nombre de cliente </label>
-                                            <input type="text" class="form-control" id="nameInput"></input>
+                                                    <input type="text" class="form-control" id="nameInput"></input>
                                                 </div>
                                             </div>
                                         </div>

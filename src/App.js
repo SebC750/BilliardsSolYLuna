@@ -8,18 +8,10 @@ function App() {
   return (
     <div className="App">
       
-    <HashRouter>
-    <Routes>
-    
-     
+    <MainPage></MainPage>
     
     
-        
-    <Route exact path="/" element={<MainPage/>}> </Route>
-    <Route exact path="/ReceiptHistory" element={<ReceiptHistory/>}> </Route>
-    
-    </Routes>
-    </HashRouter>
+  
   
     </div>
   );

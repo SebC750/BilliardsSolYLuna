@@ -41,7 +41,7 @@ const Table1 = ({ data }) => {
     const addPurchase = () => {
         
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 1000000) + 1000;
+        var orderId = Math.floor(Math.random() * 900000000) + 100000000;
         var name = document.getElementById("nameInput").value
         if(quantityNum.length < 1 || name.length < 1){
             showErrorMessage(true)
@@ -60,8 +60,8 @@ const Table1 = ({ data }) => {
         var dateString = (orderDate.getMonth()+1)+"/"+orderDay+"/"+orderDate.getFullYear();
         {
             itemSelection.map((val) => {
-                itemPurchaseList.push({ id: orderId, name: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum })
-                archiveOrderToDB({  ordername: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum, date: dateString, _id: orderId })
+                itemPurchaseList.push({ name: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum })
+                archiveOrderToDB({  ordername: name, quantity: quantityNum, product: val.in, price: val.p * quantityNum, date: dateString})
             })
 
         }
@@ -73,34 +73,31 @@ const Table1 = ({ data }) => {
         setAddItemPrompt(false)
     }
     const calculateTotalPrice = () => {
-        var s = ((time/1) % 60).toFixed(0)
+        var h = Math.floor(time / 3600).toFixed(0);
+        var m = Math.floor((time % 3600) / 60).toFixed(0);
+        var s = (time % 60).toFixed(0);
         
-        var m = Math.floor(((time/60) % 60)).toFixed(0)
-        var h = Math.floor(((time/3600) % 60)).toFixed(0)
+        var totalTimeElapsed = "Horas " + h.toString().padStart(2, '0') + " Minutos " + m.toString().padStart(2, '0') + " Segundos " + s.toString().padStart(2, '0');
         
-       
-            var totalTimeElapsed = "Horas "+h.toString().padStart(2,'0')+" Minutos "+m.toString().padStart(2,'0')+" Segundos "+s.toString().padStart(2,'0')
+        setTotalTimeElapsed(totalTimeElapsed);
+        console.log(h + " " + m + " " + s);
         
+        var total = 0;
+        itemPurchaseList.forEach((val) => {
+            total += val.price;
+        });
         
+        console.log(time);
         
-        setTotalTimeElapsed(totalTimeElapsed)
-        console.log(h+" "+m+" "+s)
-        var total = 0
-        {
-            itemPurchaseList.map((val) => {
-                total += val.price
-            })
-        }
-        console.log(time)
-        var tablePrice = (20*h)+((20/60)*m)+((20/3600)*s)
-        setTablePrice(tablePrice)
-        var totalPrice = tablePrice+total
-
-        var salesTax = totalPrice*1.08875
-        console.log(salesTax)
-        var totalPriceWithSales = (Math.round((totalPrice+salesTax)*100)/100).toFixed(2)
-        setTotalPrice(totalPriceWithSales)
-       
+        var tablePrice = (20 * h) + (20 / 60 * m) + (20 / 3600 * s);
+        setTablePrice(tablePrice);
+        
+        var totalPrice = tablePrice + total;
+        
+        var salesTax = totalPrice * 0.08875; 
+        var totalPriceWithSales = (Math.round((totalPrice + salesTax) * 100) / 100).toFixed(2);
+        
+        setTotalPrice(totalPriceWithSales);
         
     }
     const stopTimer = () => {
@@ -227,7 +224,7 @@ const Table1 = ({ data }) => {
                                 <div class="table">
                                     <thead>
                                         <tr>
-                                            <th scope="col"> ID</th>
+                                            
                                             <th scope="col"> Nombre </th>
                                             <th scope="col"> Unidades</th>
                                             <th scope="col"> Producto</th>
@@ -236,9 +233,9 @@ const Table1 = ({ data }) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {itemPurchaseList.map((val) => (
-                                            <tr key={val.id}>
-                                                <td>{val.id}</td>
+                                        {itemPurchaseList.map((val,index) => (
+                                            <tr key={index}>
+                                                
                                                 <td>{val.name}</td>
                                                 <td>{val.quantity}</td>
                                                 <td>{val.item}</td>
@@ -332,7 +329,7 @@ const Table1 = ({ data }) => {
                                     <tr key={val.id}>
                                         <td>{val.quantity}</td>
                                         <td>{val.item}</td>
-                                        <td>$ {val.price}</td>
+                                        <td>$ {val.price*quantity}</td>
 
                                     </tr>
                                 ))}

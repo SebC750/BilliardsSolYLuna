@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import Dropdown from "react-bootstrap/Dropdown"
 import Table1 from "./Table1.js"
-
+import ReceiptHistory from "./receiptHistory.js"
 import Table2 from "./Table2.js"
 import Table3 from "./Table3.js"
 import Navbar from "./navbar.js"
@@ -22,6 +22,7 @@ import ItemArray from "./items.js"
 
 
 const MainPage = () => {
+    const [tableData, setTableData] = useState([])
     const [itemList, setItemList] = useState(ItemArray)
     const [receiptModal, openReceiptModal] = useState(false)
     const [orderList, setOrderList] = useState([])
@@ -30,6 +31,7 @@ const MainPage = () => {
     const [itemSelection, setItemSelection] = useState([{ in: "", p: 0 }])
     const [selectedName, setSelectedName] = useState("")
     const [errorMessage, showErrorMessage] = useState(false)
+    const [dataChanged, setDataChanged] = useState(false)
     const openAddOrderPrompt = (name) =>{
         setAddItemPrompt(true)
         setSelectedName(name)
@@ -38,7 +40,14 @@ const MainPage = () => {
     const message = await database.insertReceipt(data)
     console.log(message)
     }
-
+    async function getData() {
+        const message = await database.getAll()
+        console.log(message)
+        setTableData(message)
+    }
+    useEffect(() =>{
+         getData()
+    },[])
     async function removeOrderFromDB(data){
         const message = await database.deleteReceipt(data)
         console.log(message)
@@ -46,8 +55,8 @@ const MainPage = () => {
     const addOrder = () => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 1000000)+1000;
-        console.log(orderId)
+        var orderId = Math.floor(Math.random() * 900000000) + 100000000;
+        
         var orderDate = new Date()
         var orderDay = ""+orderDate.getDate()
         
@@ -55,15 +64,17 @@ const MainPage = () => {
         {
             orderDay = "0"+orderDate.getDate()
         }
-        var dateString = (orderDate.getMonth()+1)+"/"+orderDay+"/"+orderDate.getFullYear();
+        var dateString = (orderDate.getMonth()+1)+"/"+orderDay+"/"+orderDate.getFullYear()+", "+orderDate.getHours()+":"+orderDate.getMinutes()+":"+orderDate.getSeconds();
         
         let nameArray = orderList.filter(x => x.name === selectedName)
         {nameArray.map((val) =>  (
-            val.order.push({ id: orderId, quantity: quantityNum, item: itemSelection[0].in, price: itemSelection[0].p * quantityNum,  date: dateString}),
+            val.order.push({quantity: quantityNum, product: itemSelection[0].in, price: itemSelection[0].p * quantityNum,  date: dateString}),
             archiveOrderToDB({ordername: val.name, quantity: quantityNum, product: itemSelection[0].in, price: itemSelection[0].p * quantityNum, status: "sin pagar", date: dateString})   
                 ))}
         setItemSelection([{ in: "", p: 0 }])
         setSelectedName("")
+        setDataChanged(!dataChanged);
+        getData()
     }
     
     const removeItem = (id, name) =>{
@@ -151,7 +162,7 @@ const MainPage = () => {
                                                         <tr key={x.id}>
                                                             <td> {x.id} </td>
                                                             <td> {x.quantity} </td>
-                                                            <td> {x.item}</td>
+                                                            <td> {x.product}</td>
                                                             <td> {x.price}</td>
                                                             <button type="button" class="btn btn-success" onClick={()=> removeItem(x.id, val.name)}> Cancelar </button>
                                                         </tr>
@@ -232,7 +243,7 @@ const MainPage = () => {
 
                     >
                         <Modal.Header >
-                            <Modal.Title id="contained-modal-title-vcenter"> Anadir Compra para {selectedName}</Modal.Title>
+                            <Modal.Title id="contained-modal-title-vcenter"> Anadir compra para {selectedName}</Modal.Title>
 
                         </Modal.Header>
                         <Modal.Body className="px-5">
@@ -274,7 +285,10 @@ const MainPage = () => {
                     </Modal>
                 </div>
             ) : null}
-
+            
+             <ReceiptHistory allData={tableData}/>
+            
+            
         </div>
     );
 }
