@@ -41,7 +41,7 @@ const Table1 = ({ data }) => {
     const addPurchase = () => {
         
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 900000000) + 100000000;
+       
         var name = document.getElementById("nameInput").value
         if(quantityNum.length < 1 || name.length < 1){
             showErrorMessage(true)

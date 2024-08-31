@@ -38,7 +38,7 @@ const Table2 = ({ data }) => {
     const addPurchase = () => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 900000000) + 100000000;
+        
         var name = document.getElementById("nameInput").value
         console.log(orderId)
         var orderDate = new Date()

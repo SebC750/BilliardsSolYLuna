@@ -55,7 +55,7 @@ const MainPage = () => {
     const addOrder = () => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
-        var orderId = Math.floor(Math.random() * 900000000) + 100000000;
+        
         
         var orderDate = new Date()
         var orderDay = ""+orderDate.getDate()
