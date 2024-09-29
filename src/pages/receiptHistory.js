@@ -2,13 +2,11 @@ import { Link } from "react-router-dom"
 import Navbar from "./navbar.js"
 import Dropdown from "react-bootstrap/Dropdown"
 import Modal from "react-bootstrap/Modal"
-import Pagination from "react-bootstrap/Pagination"
+import {Container, Table} from "react-bootstrap"
 import PageNavigator from "./pageNavigator.js"
 import { useState, useEffect } from "react"
 
-
-
-const ReceiptHistory = () => {
+const ReceiptHistory = ({tableData}) => {
     const [data, setData] = useState([])
     const [searchType, setSearchType] = useState("")
     const [errorMessage, showErrorMessage] = useState(false)
@@ -17,33 +15,26 @@ const ReceiptHistory = () => {
     const [isChanged, setIsChanged] = useState(false)
     const [page, setPage] = useState(1)
     const totalPages = Math.ceil(data.length / 5)
-    const indexOfLastPage = data.length*5
+    const indexOfLastPage = data.length * 5
     const indexOfFirstPage = indexOfLastPage - 5
-    var ordersShownOnTable = data.slice(indexOfFirstPage, indexOfLastPage);
+    //let ordersShownOnTable = data.slice(indexOfFirstPage, indexOfLastPage);
 
-    const onPageChange = (page) =>{
+    const onPageChange = (page) => {
         setPage(page)
     }
-    async function getData(){
-        const getdata = await database.getAll();
-        console.log(getdata)
-        setData(getdata)
-    }
-    
-    
-    useEffect(() =>{
-        getData()
-    },[isChanged])
-    async function updateOrderPaidStatus(){
-        
+
+    useEffect(() => {
+        setData(tableData)
+    }, [tableData, isChanged])
+    async function updateOrderPaidStatus() {
+
         console.log(selectedOrder)
         const message = await database.changeOrderStatus(selectedOrder)
         console.log(message)
         setIsChanged(true)
-        getData()
     }
     async function getDataByStatus() {
-        const message = await database.searchForUnpaidOrders()
+        const message = await database.searchForStatus()
         setData(message)
     }
 
@@ -51,181 +42,167 @@ const ReceiptHistory = () => {
         const message = await database.searchForProduct(productVal)
         setData(message)
     }
+
     async function getDataByName(nameVal) {
         const message = await database.searchForName(nameVal)
         setData(message)
     }
+
     async function getDataByDate(dateVal) {
         const message = await database.searchForDate(dateVal)
         setData(message)
     }
-    
-    const openPaidModal = (id) =>{
+
+    const openPaidModal = (id) => {
         setOpenMarkAsPaidModal(true)
         setSelectedOrder(id)
     }
+
     const markOrderAsPaid = () => {
         setOpenMarkAsPaidModal(false)
         updateOrderPaidStatus()
     }
-    const checkDate = (date) => {
-        var regex = /^\d{1,2}\/\d{1,2}\/\d{4}$/
-    }
+
     const searchItem = () => {
-        if (searchType === "Producto") {
-            var productVal = document.getElementById("input").value
-            if (productVal.length < 1) {
-                showErrorMessage(true)
-            }
-            console.log(data)
-            getDataByProduct(productVal)
+        if(!searchType){
+            showErrorMessage("Por favor entrar algo para la busqueda.")
+            return;
         }
-        if (searchType === "Nombre") {
-            var nameVal = document.getElementById("input").value
-            if (nameVal.length < 1) {
-                showErrorMessage(true)
-            }
-            console.log(nameVal)
-            getDataByName(nameVal)
-        }
-        if (searchType === "Fecha") {
-            var dateVal = document.getElementById("input").value
-            console.log(dateVal)
-            const isValidDate = checkDate(dateVal)
-
-            getDataByDate(dateVal)
-        }
-        if (searchType === "Status") {
-            getDataByStatus()
-
+        switch (searchType) {
+            case "Producto":
+                getDataByProduct(inputValue);
+                break;
+            case "Nombre":
+                getDataByName(inputValue);
+                break;
+            case "Fecha":
+                getDataByDate(inputValue);
+                break;
+            case "Status":
+                getDataByStatus();
+                break;
+            default:
+                showErrorMessage(true);
         }
     }
 
     return (
-        <div>
-            
+        <>
 
-
-
-
-            <div class="history-title">
-                <h1> Historial de Recibos </h1>
-            </div>
-
-            <div class="history-body">
-                <div class="container">
-
-
-                    <div class="searchBar">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="">Buscar por: </span>
-                            </div>
-                            <Dropdown>
-                                <Dropdown.Toggle variant="dark" id="dropdown-basic">
-                                    {searchType}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                    <Dropdown.Item onClick={() => setSearchType("Producto")}> Producto </Dropdown.Item>
-                                    <Dropdown.Item onClick={() => setSearchType("Nombre")}> Nombre </Dropdown.Item>
-                                    <Dropdown.Item onClick={() => setSearchType("Fecha")}> Fecha </Dropdown.Item>
-                                    <Dropdown.Item onClick={() => setSearchType("Status")}> Deudas/Falta de pago</Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                            {searchType == "Fecha" ? (
-                                <div>
-                                    <input type="text" class="form-control" id="input" name="inputVal" placeholder="Usa el formato MM/DD/YYYY" />
-                                </div>
-                            ) : <input type="text" class="form-control" id="input" name="inputVal" />}
-
-                            {errorMessage ? (
-                                <p style={{ color: "red", fontStyle: "12px" }}> Por favor ingresar algo en la busqueda. </p>
-                            ) : null}
-                            <button type="button" class="btn btn-primary" onClick={() => searchItem()}> Ingresar </button>
-                        </div>
-                    </div>
-
-
-
-
+            <Container>
+                <div class="history-title">
+                    <h1> Historial de Recibos </h1>
                 </div>
 
+                <div class="history-body">
+                    <div class="container">
 
 
-                <div align="center">
-                    <div class="history-table-style" >
-                        <table class="table" style={{ width: "1000px" }}>
-                            <thead>
-                                <tr>
+                        <div class="searchBar">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="">Buscar por: </span>
+                                </div>
+                                <Dropdown>
+                                    <Dropdown.Toggle variant="dark" id="dropdown-basic">
+                                        {searchType}
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item onClick={() => setSearchType("Producto")}> Producto </Dropdown.Item>
+                                        <Dropdown.Item onClick={() => setSearchType("Nombre")}> Nombre </Dropdown.Item>
+                                        <Dropdown.Item onClick={() => setSearchType("Fecha")}> Fecha </Dropdown.Item>
+                                        <Dropdown.Item onClick={() => setSearchType("Status")}> Deudas/Falta de pago</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                                {searchType === "Fecha" ? (
 
-                                    <th scope="col" style={{ width: "500px", fontSize: "24px" }}> Order ID</th>
-                                    <th scope="col" style={{ width: "500px", fontSize: "24px" }}> Nombre de Cliente</th>
-                                    <th scope="col" style={{ width: "500px", fontSize: "24px" }}> Unidades</th>
-                                    <th scope="col" style={{ width: "500px", fontSize: "24px" }}> Producto</th>
-                                    <th scope="col" style={{ width: "500px", fontSize: "24px" }}> Precio</th>
-                                    <th scope="col" style={{ width: "500px", fontSize: "24px" }}> Fecha de Compra</th>
-                                    <th scope="col" style={{ width: "500px", fontSize: "24px" }}> Estado</th>
+                                    <input type="text" class="form-control" id="input" name="inputVal" placeholder="Usa el formato MM/DD/YYYY" />
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {!data ? (
-                                    <div>
-                                        <p> Loading </p>
-                                    </div>
+                                )
+                                    : searchType === "Status" ? (<input type="text" class="form-control" id="input" name="inputVal" placeholder="Escribe 'cancelado' o 'sin pagar' para ver deudas y pagos" />)
+
+                                        : <input type="text" class="form-control" id="input" name="inputVal" />}
+
+                                {errorMessage ? (
+                                    <p style={{ color: "red", fontStyle: "12px" }}> Por favor ingresar algo en la busqueda. </p>
                                 ) : null}
-                                {ordersShownOnTable.map((val) => (
-                                    <tr key={val._id}>
-                                        <td>{val._id}</td>
-                                        <td>{val.ordername}</td>
-                                        <td>{val.quantity}</td>
-                                        <td>{val.product}</td>
-                                        <td>{val.price}</td>
-                                        <td>{val.date}</td>
-                                        {val.status === "sin pagar" ?
-                                            (<div> <td style={{ color: "red" }}>{val.status}</td>
-                                                <td>
-                                                    <button type="button" className="btn btn-danger" onClick={() => openPaidModal(val._id)}> Cancelar </button>
-                                                </td> </div>) :
-                                            <td style={{ color: "green" }}>{val.status}</td>
-                                        }
+                                <button type="button" class="btn btn-primary" onClick={() => searchItem()}> Ingresar </button>
+                            </div>
+                        </div>
 
+                    </div>
+
+                    <div align="center">
+                        <div class="history-table-style" >
+                            <Table>
+                                <thead>
+                                    <tr>
+
+                                        <th scope="col" > Order ID</th>
+                                        <th scope="col" > Nombre de Cliente</th>
+                                        <th scope="col" > Unidades</th>
+                                        <th scope="col" > Producto</th>
+                                        <th scope="col" > Precio</th>
+                                        <th scope="col" > Fecha de Compra</th>
+                                        <th scope="col" > Estado</th>
 
                                     </tr>
-                                ))}
+                                </thead>
+                                <tbody>
+                                    {!data ? (
+                                        <div>
+                                            <p> Loading </p>
+                                        </div>
+                                    ) : null}
+                                    {data.map((val) => (
+                                        <tr key={val._id}>
+                                            <td>{val._id}</td>
+                                            <td>{val.ordername}</td>
+                                            <td>{val.quantity}</td>
+                                            <td>{val.product}</td>
+                                            <td>{val.price}</td>
+                                            <td>{val.date}</td>
+                                            {val.status === "sin pagar" ?
+                                                (<div> <td style={{ color: "red" }}>{val.status}</td>
+                                                    <td>
+                                                        <button type="button" className="btn btn-danger" onClick={() => openPaidModal(val._id)}> Cancelar </button>
+                                                    </td> </div>) :
+                                                <td style={{ color: "green" }}>{val.status}</td>
+                                            }
 
-                            </tbody>
 
-                        </table>
-                        <div>
+                                        </tr>
+                                    ))}
 
-            <PageNavigator totalPages={totalPages} currentPage={page} onPageChange={onPageChange} data={data}/>
-        </div>
+                                </tbody>
+
+                            </Table>
+                            <div>
+
+                                <PageNavigator totalPages={totalPages} currentPage={page} onPageChange={onPageChange} data={data} />
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            {openMarkAsPaidModal ? (
-                <Modal
-                show={true}
+                {openMarkAsPaidModal ? (
+                    <Modal
+                        show={true}
                         size="lg"
                         aria-labelledby="contained-modal-title-vcenter"
                         centered>
-                    <Modal.Title> Estas seguro?</Modal.Title>
-                    <Modal.Body>
-                        <p> Estas seguro de que quieres cancelar esta orden?</p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <button type="button" className="btn btn-primary" onClick={() => setOpenMarkAsPaidModal(false)}> No, atras</button>
-                        <button type="button" className="btn btn-primary" onClick={() => markOrderAsPaid()}> Si, ya esta pagado</button>
-                    </Modal.Footer>
-                </Modal>
-            ) : null}
-            
+                        <Modal.Title> Estas seguro?</Modal.Title>
+                        <Modal.Body>
+                            <p> Estas seguro de que quieres cancelar esta orden?</p>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <button type="button" className="btn btn-primary" onClick={() => setOpenMarkAsPaidModal(false)}> No, atras</button>
+                            <button type="button" className="btn btn-primary" onClick={() => markOrderAsPaid()}> Si, ya esta pagado</button>
+                        </Modal.Footer>
+                    </Modal>
+                ) : null}
+            </Container>
 
-
-
-
-        </div>
+        </>
     );
 }
 export default ReceiptHistory;

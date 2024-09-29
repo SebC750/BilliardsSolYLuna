@@ -31,6 +31,8 @@ function createWindow () {
     
     return getAllDatabaseValues
   })
+
+  
   ipcMain.handle('get-product', async (err, data) =>{
     const getAllDatabaseValues = await db.find({product: data})
     
@@ -52,6 +54,11 @@ function createWindow () {
     
     return getAllDatabaseValues
   })
+  ipcMain.handle('get-status', async (err, data) => {
+    const getAllDatabaseValues = await db.find({status: data})
+    
+    return getAllDatabaseValues
+  })
   ipcMain.handle('insert-receipt', async (err, data) =>{
     db.insert(data, function(err, newData){
       console.log(newData)
@@ -61,10 +68,20 @@ function createWindow () {
     
     return "order saved to db"
   })
+  ipcMain.handle('get-all-by-table', async (err, data) =>{
+    const getAllDatabaseValues = db.find({mesa: data})
+    return getAllDatabaseValues
+  })
   ipcMain.handle('delete-receipt', async (err, data) =>{
     db.remove({_id: data}, function(err, newData){
       console.log(newData)
     })
+  ipcMain.handle('delete-receipt-from-other-receipts', async (err, data) =>{
+    const { id, section, name } = data;
+    db.remove({_id: id, mesa: section, ordername: name}, function(err, newData){
+      console.log(newData)
+    })
+  })
     
     
     
@@ -75,11 +92,6 @@ function createWindow () {
       console.log(newData)
     })
     return "order set to paid."
-  })
-  ipcMain.handle('search-for-unpaid-orders', async(err, data) =>{
-    const unpaidOrders = await db.find({status: "sin pagar"})
-
-    return unpaidOrders
   })
   // Open the DevTools.
   win.webContents.openDevTools()

@@ -49,7 +49,7 @@ const Table1 = ({ data }) => {
         
         else {
             setAddItemPrompt(false)
-        console.log(orderId)
+        
         var orderDate = new Date()
         var orderDay = ""+orderDate.getDate()
         
@@ -57,11 +57,11 @@ const Table1 = ({ data }) => {
         {
             orderDay = "0"+orderDate.getDate()
         }
-        var dateString = (orderDate.getMonth()+1)+"/"+orderDay+"/"+orderDate.getFullYear();
+        var dateString = (orderDate.getMonth()+1)+"/"+orderDay+"/"+orderDate.getFullYear()+", "+orderDate.getHours()+":"+orderDate.getMinutes()+":"+orderDate.getSeconds();
         {
             itemSelection.map((val) => {
                 itemPurchaseList.push({ name: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum })
-                archiveOrderToDB({  ordername: name, quantity: quantityNum, product: val.in, price: val.p * quantityNum, date: dateString})
+                archiveOrderToDB({  ordername: name, mesa: 1,quantity: quantityNum, product: val.in, price: val.p * quantityNum, status: 'sin pagar',date: dateString})
             })
 
         }

@@ -1,8 +1,8 @@
 import React from "react"
 import {
-    
+
     Modal,
-    
+
 } from "react-bootstrap";
 import Dropdown from "react-bootstrap/Dropdown"
 import Table1 from "./Table1.js"
@@ -12,9 +12,7 @@ import Table3 from "./Table3.js"
 import Navbar from "./navbar.js"
 import { useState, useEffect } from "react"
 import ItemArray from "./items.js"
-
-
-
+import { otherReceiptIDGenerator } from "./functions.js";
 
 const MainPage = () => {
     const [tableData, setTableData] = useState([])
@@ -27,62 +25,75 @@ const MainPage = () => {
     const [selectedName, setSelectedName] = useState("")
     const [errorMessage, showErrorMessage] = useState(false)
     const [dataChanged, setDataChanged] = useState(false)
-    const openAddOrderPrompt = (name) =>{
+
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+
+    useEffect(() => {
+        getData();
+    }, [dataChanged]);
+    const openAddOrderPrompt = (name) => {
         setAddItemPrompt(true)
         setSelectedName(name)
     }
-    async function archiveOrderToDB(data){
-    const message = await database.insertReceipt(data)
-    console.log(message)
+    async function archiveOrderToDB(data) {
+        const message = await database.insertReceipt(data)
+        console.log(message)
+        setDataChanged(true);
     }
     async function getData() {
         const message = await database.getAll()
         console.log(message)
-        setTableData(message)
+        setTableData(message);
     }
-    useEffect(() =>{
-         getData()
-    },[])
-    async function removeOrderFromDB(data){
-        const message = await database.deleteReceipt(data)
+
+    async function removeOrderFromDB(id, section, name) {
+        const message = await database.deleteReceiptFromOtherReceipts(id,section,name)
         console.log(message)
     }
     const addOrder = () => {
         setAddItemPrompt(false)
         var quantityNum = document.getElementById("quantityInput").value;
-        
-        
+
+
         var orderDate = new Date()
-        var orderDay = ""+orderDate.getDate()
-        
-        if(orderDate.getDate() < 10)
-        {
-            orderDay = "0"+orderDate.getDate()
+        var orderDay = "" + orderDate.getDate()
+
+        if (orderDate.getDate() < 10) {
+            orderDay = "0" + orderDate.getDate()
         }
-        var dateString = (orderDate.getMonth()+1)+"/"+orderDay+"/"+orderDate.getFullYear()+", "+orderDate.getHours()+":"+orderDate.getMinutes()+":"+orderDate.getSeconds();
+        var dateString = (orderDate.getMonth() + 1) + "/" + orderDay + "/" + orderDate.getFullYear() + ", " + orderDate.getHours() + ":" + orderDate.getMinutes() + ":" + orderDate.getSeconds();
         
         let nameArray = orderList.filter(x => x.name === selectedName)
-        {nameArray.map((val) =>  (
-            val.order.push({quantity: quantityNum, product: itemSelection[0].in, price: itemSelection[0].p * quantityNum,  date: dateString}),
-            archiveOrderToDB({ordername: val.name, quantity: quantityNum, product: itemSelection[0].in, price: itemSelection[0].p * quantityNum, status: "sin pagar", date: dateString})   
-                ))}
+        {
+
+            nameArray.map((val) => (
+                
+                val.order.push({ other_receipt_id: val.id, quantity: quantityNum, product: itemSelection[0].in, price: itemSelection[0].p * quantityNum, date: dateString }),
+                archiveOrderToDB({ other_receipt_id: val.id, ordername: val.name, mesa: "mesa normal", quantity: quantityNum, product: itemSelection[0].in, price: itemSelection[0].p * quantityNum, status: "sin pagar", date: dateString })
+            ))
+        }
         setItemSelection([{ in: "", p: 0 }])
         setSelectedName("")
-        setDataChanged(!dataChanged);
+        setDataChanged(true);
         getData()
     }
-    
-    const removeItem = (id, name) =>{
-        
+
+    const removeItem = (id, section, name) => {
+
         const newList = orderList.map((val) => {
-            return{
+            return {
                 ...val,
-                order: val.order.filter(x => x.id !== id)
+                order: val.order.filter(x => x.other_receipt_id !== id)
             }
         })
-        removeOrderFromDB(id)
+        removeOrderFromDB(id, section, name)
         setOrderList(newList)
-}
+    }
+    
     const closeAddOrderModal = () => {
         setAddItemPrompt(false)
     }
@@ -90,28 +101,29 @@ const MainPage = () => {
         openReceiptModal(false)
     }
 
-    const removeReceipt = (value) =>{
-        setOrderList(deleteItem =>{
+    const removeReceipt = (value) => {
+        setOrderList(deleteItem => {
             return deleteItem.filter(i => i.name !== value)
-         })
+        })
     }
     const addReceipt = () => {
         var name = document.getElementById("nameInput").value
         if (orderList.length < 1) {
             showOpenReceiptList(true)
         }
-        if(name.length < 1){
+        if (name.length < 1) {
             showErrorMessage(true)
-            
+
         }
         else {
-        showErrorMessage(false)
-        orderList.push({ name: name, order: [] })
-        console.log(orderList)
-        openReceiptModal(false)
+            let newReceiptId = otherReceiptIDGenerator()
+            showErrorMessage(false)
+            orderList.push({ id: newReceiptId, name: name, order: []})
+            console.log(orderList)
+            openReceiptModal(false)
         }
     }
-    
+
     return (
         <div>
 
@@ -135,41 +147,41 @@ const MainPage = () => {
                                     <div align="center">
                                         {orderList.map((val) => (
                                             <div class="other-receipt-borders">
-                                            <div class="table">
+                                                <div class="table">
 
-                                                <h3> {val.name} </h3>
+                                                    <h3> {val.name} </h3>
 
 
-                                                <thead>
-                                                    <tr>
-                                                        
-                                                        <th scope="col"> Unidades</th>
-                                                        <th scope="col"> Producto</th>
-                                                        <th scope="col"> Precio</th>
-                                                    </tr>
+                                                    <thead>
+                                                        <tr>
 
-                                                </thead>
-                                                <tbody>
-                                                <>
-                                                    {val.order.map((x) => (
-
-                                                        <tr key={x.id}>
-                                                            
-                                                            <td> {x.quantity} </td>
-                                                            <td> {x.product}</td>
-                                                            <td> {x.price}</td>
-                                                            <button type="button" class="btn btn-success" onClick={()=> removeItem(x.id, val.name)}> Cancelar </button>
+                                                            <th scope="col"> Unidades</th>
+                                                            <th scope="col"> Producto</th>
+                                                            <th scope="col"> Precio</th>
                                                         </tr>
-                                                    ))}
 
-                                                </>
-                                                </tbody>
-                                                <button type="button" class="btn btn-primary" onClick={() => openAddOrderPrompt(val.name)}> Anadir Compra </button>
-                                                <button type="button" class="btn btn-warning" onClick={() => removeReceipt(val.name)}> Remover recibo</button>
-                                            </div>
+                                                    </thead>
+                                                    <tbody>
+                                                        <>
+                                                            {val.order.map((x) => (
+
+                                                                <tr key={x.other_receipt_id}>
+
+                                                                    <td> {x.quantity} </td>
+                                                                    <td> {x.product}</td>
+                                                                    <td> {x.price}</td>
+                                                                    <button type="button" class="btn btn-success" onClick={() => removeItem(x.other_receipt_id, 'mesa normal', val.name)}> Cancelar </button>
+                                                                </tr>
+                                                            ))}
+
+                                                        </>
+                                                    </tbody>
+                                                    <button type="button" class="btn btn-primary" onClick={() => openAddOrderPrompt(val.name)}> Anadir Compra </button>
+                                                    <button type="button" class="btn btn-warning" onClick={() => removeReceipt(val.name)}> Remover recibo</button>
+                                                </div>
                                             </div>
                                         ))}
-                                        
+
                                     </div>
 
                                 ) : <p> No hay recibos activos en este momento. </p>}
@@ -196,10 +208,10 @@ const MainPage = () => {
 
                                                         </div>
                                                         <div class="col">
-                                                            <label htmlFor="nameInput" style={{fontSize: "20px"}}> Nombre de recibo </label>
+                                                            <label htmlFor="nameInput" style={{ fontSize: "20px" }}> Nombre de recibo </label>
                                                             {errorMessage ? (
-                                                                <p style={{color: "red"}}> Por favor ingrese un nombre. </p>
-                                                            ):null}
+                                                                <p style={{ color: "red" }}> Por favor ingrese un nombre. </p>
+                                                            ) : null}
                                                             <input type="text" class="form-control" id="nameInput"></input>
                                                         </div>
                                                     </div>
@@ -246,7 +258,7 @@ const MainPage = () => {
                                     <div class="col">
                                         <Dropdown>
                                             <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                                                Escoger producto 
+                                                Escoger producto
                                             </Dropdown.Toggle>
                                             <Dropdown.Menu>
                                                 {itemList.map((val) => (
@@ -256,10 +268,10 @@ const MainPage = () => {
                                                     </div>
 
                                                 ))}
-                                             
+
                                             </Dropdown.Menu>
                                         </Dropdown>
-                                         
+
                                     </div>
                                     <p> {itemSelection[0].in}</p>
                                     <div class="col">
@@ -279,10 +291,10 @@ const MainPage = () => {
                     </Modal>
                 </div>
             ) : null}
-            
-             <ReceiptHistory />
-            
-            
+
+            <ReceiptHistory tableData={tableData} />
+
+
         </div>
     );
 }

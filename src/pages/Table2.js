@@ -40,18 +40,18 @@ const Table2 = ({ data }) => {
         var quantityNum = document.getElementById("quantityInput").value;
         
         var name = document.getElementById("nameInput").value
-        console.log(orderId)
+        
         var orderDate = new Date()
         var orderDay = "" + orderDate.getDate()
 
         if (orderDate.getDate() < 10) {
             orderDay = "0" + orderDate.getDate()
         }
-        var dateString = (orderDate.getMonth() + 1) + "/" + orderDay + "/" + orderDate.getFullYear();
+        var dateString = (orderDate.getMonth()+1)+"/"+orderDay+"/"+orderDate.getFullYear()+", "+orderDate.getHours()+":"+orderDate.getMinutes()+":"+orderDate.getSeconds();
         {
             itemSelection.map((val) => {
                 itemPurchaseList.push({ name: name, quantity: quantityNum, item: val.in, price: val.p * quantityNum })
-                archiveOrderToDB({ ordername: name, quantity: quantityNum, product: val.in, price: val.p * quantityNum, date: dateString })
+                archiveOrderToDB({ ordername: name, mesa: 2, quantity: quantityNum, product: val.in, price: val.p * quantityNum, status: 'sin pagar', date: dateString })
             })
 
         }
@@ -122,6 +122,7 @@ const Table2 = ({ data }) => {
         setTime(0)
     }
     useEffect(() => {
+
         let interval
         if (timeStart) {
             setShowTimer(true)
@@ -212,7 +213,7 @@ const Table2 = ({ data }) => {
                                         <div class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col"> ID</th>
+                                                    
                                                     <th scope="col"> Nombre</th>
                                                     <th scope="col"> Unidades</th>
                                                     <th scope="col"> Producto</th>
@@ -223,7 +224,6 @@ const Table2 = ({ data }) => {
                                             <tbody>
                                                 {itemPurchaseList.map((val, index) => (
                                                     <tr key={index}>
-
                                                         <td>{val.name}</td>
                                                         <td>{val.quantity}</td>
                                                         <td>{val.item}</td>

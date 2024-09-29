@@ -15,20 +15,19 @@ function PageNavigator({currentPage, totalPages, onPageChange, data}){
       }
 
     return (
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
 
             <Pagination>
-                <Pagination.First onClick={() => onPageChange(indexOfFirstPage)}>
+                <Pagination.First onClick={() => onPageChange(indexOfFirstPage)}/>
 
-                </Pagination.First>
+                
                 <Pagination.Prev onClick={() => onPageChange(currentPage-1)}>
-                    
-                </Pagination.Prev>
+                    </Pagination.Prev>
                      {items}
                      <Pagination.Next onClick={() => onPageChange(currentPage+1)}></Pagination.Next>
-                <Pagination.Last onClick={() => onPageChange(indexOfLastPage)}>
+                <Pagination.Last onClick={() => onPageChange(indexOfLastPage)}/>
 
-                </Pagination.Last>
+               
                 
             </Pagination>
         </div>
