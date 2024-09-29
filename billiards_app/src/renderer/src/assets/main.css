@@ -6,4 +6,20 @@ html, body{
 }
 a{
   text-decoration: none;
+  color: white;
+}
+.pool-table-timer{
+  display: flex;
+  align-items: center;
+
+}
+.other-receipt-table-container{
+  border: "solid"; 
+  border-width: 2; 
+  margin-bottom: 50;
+}
+.receipt-history-title{
+  background-color: "orange"; 
+  padding: 10; 
+  color: "white";
 }

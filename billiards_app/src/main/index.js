@@ -2,7 +2,65 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import Datastore from "nedb"
 
+//-------------------------------------------//
+//Database Connection
+const db = new Datastore({filename: 'orders.db', autoload: true})
+//-------------------------------------------//
+
+//-------------------------------------------//
+//Database API routes
+ipcMain.handle('get-all', async () =>{
+  const getAllDatabaseValues = await db.find({})
+  return getAllDatabaseValues
+})
+
+ipcMain.handle('get-product', async (err, data) =>{
+  const getAllDatabaseValues = await db.find({product: data})
+  return getAllDatabaseValues
+})
+
+ipcMain.handle('get-name', async (err, data) =>{
+  const getAllDatabaseValues = await db.find({ordername: data})
+  return getAllDatabaseValues
+})
+
+ipcMain.handle('get-date', async (err, data) =>{
+  const getAllDatabaseValues = await db.find({date: data})
+  return getAllDatabaseValues
+})
+
+ipcMain.handle('get-status', async (err, data) => {
+  const getAllDatabaseValues = await db.find({status: data})
+  return getAllDatabaseValues
+})
+
+ipcMain.handle('insert-receipt', async (err, data) =>{
+  db.insert(data, function(err, newData){
+    console.log(newData)
+  })
+  return "order saved to db"
+})
+
+ipcMain.handle('get-all-by-table', async (err, data) =>{
+  const getAllDatabaseValues = db.find({mesa: data})
+  return getAllDatabaseValues
+})
+
+ipcMain.handle('delete-receipt', async (err, data) =>{
+  db.remove({_id: data}, function(err, newData){
+    console.log(newData)
+  })
+})
+
+ipcMain.handle('mark-order-as-paid', async(err, data) => {
+  db.update({_id: data},{$set:{status: "cancelado"}}, function(err, newData) {
+    console.log(newData)
+  })
+  return "order set to paid."
+})
+//-------------------------------------------//
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
