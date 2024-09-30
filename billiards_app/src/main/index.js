@@ -1,66 +1,130 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import { join, resolve} from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import Datastore from "nedb"
+import Datastore from 'nedb-promises';
+import { v4 as uuidv4 } from 'uuid';
 
 //-------------------------------------------//
-//Database Connection
-const db = new Datastore({filename: 'orders.db', autoload: true})
+// Database Connection
+const db = new Datastore({ filename: "orders.db", autoload: true});
+
 //-------------------------------------------//
+
 
 //-------------------------------------------//
 //Database API routes
 ipcMain.handle('get-all', async () =>{
-  const getAllDatabaseValues = await db.find({})
-  return getAllDatabaseValues
+  try {
+    const getAllDatabaseValues = await db.find({});
+    return getAllDatabaseValues;
+  } catch (error) {
+    console.error('Could not get all of the database records! Error:', error);
+    throw error;
+  }
 })
 
 ipcMain.handle('get-product', async (err, data) =>{
-  const getAllDatabaseValues = await db.find({product: data})
-  return getAllDatabaseValues
+  try{
+    const getAllDatabaseValues = await db.find({product: data})
+    return getAllDatabaseValues
+  }catch(e){
+    console.error('Could not get all of the database records by products! Error:', error);
+    throw error;
+  }
+  
 })
 
 ipcMain.handle('get-name', async (err, data) =>{
-  const getAllDatabaseValues = await db.find({ordername: data})
-  return getAllDatabaseValues
+  try{
+    const getAllDatabaseValues = await db.find({ordername: data})
+    return getAllDatabaseValues
+  }catch(e){
+    console.error('Could not get all of the database records by client name! Error:', error);
+    throw error;
+  }
+  
 })
 
 ipcMain.handle('get-date', async (err, data) =>{
-  const getAllDatabaseValues = await db.find({date: data})
-  return getAllDatabaseValues
+  try{
+    const getAllDatabaseValues = await db.find({date: data})
+    return getAllDatabaseValues
+  }catch(e){
+    console.error('Could not get all of the database records by date! Error:', error);
+    throw error;
+  }
+  
 })
 
 ipcMain.handle('get-status', async (err, data) => {
-  const getAllDatabaseValues = await db.find({status: data})
-  return getAllDatabaseValues
-})
-
-ipcMain.handle('insert-receipt', async (err, data) =>{
-  db.insert(data, function(err, newData){
-    console.log(newData)
-  })
-  return "order saved to db"
+  try{
+    const getAllDatabaseValues = await db.find({status: data})
+    return getAllDatabaseValues
+  }catch(e){
+    console.error('Could not get all of the database records by pay status! Error:', error);
+    throw error;
+  }
+  
 })
 
 ipcMain.handle('get-all-by-table', async (err, data) =>{
-  const getAllDatabaseValues = db.find({mesa: data})
-  return getAllDatabaseValues
+  try{
+    const getAllDatabaseValues = db.find({mesa: data})
+    return getAllDatabaseValues
+  }catch(e){
+    console.error('Could not get all of the database records by table! Error:', error);
+    throw error;
+  }
+  
 })
 
-ipcMain.handle('delete-receipt', async (err, data) =>{
-  db.remove({_id: data}, function(err, newData){
-    console.log(newData)
-  })
+ipcMain.handle('insert-order', async (err, data) =>{
+  try{
+    db.insert(data, function(err, newData){
+      console.log(newData)
+    })
+    return "order saved to db"
+  }catch(e){
+    console.error('Could not insert the order into the database. Error:', error);
+    throw error;
+  }
+  
+})
+
+ipcMain.handle('delete-order', async (err, data) =>{
+  try{
+    db.remove({_id: data}, function(err, newData){
+      console.log(newData)
+    })
+  }catch(e){
+    console.error('Could not delete the order from the database. Error:', error);
+  }
+  
 })
 
 ipcMain.handle('mark-order-as-paid', async(err, data) => {
-  db.update({_id: data},{$set:{status: "cancelado"}}, function(err, newData) {
-    console.log(newData)
-  })
-  return "order set to paid."
+  try{
+    db.update({_id: data},{$set:{status: "cancelado"}}, function(err, newData) {
+      console.log(newData)
+    })
+    return "order set to paid."
+  }catch(e){
+    console.error('Unable to mark the order as paid. Error:', error);
+  }
+  
 })
-//-------------------------------------------//
+
+ipcMain.handle('generate-new-receipt-id', async () =>{
+  try {
+    const newReceiptId = uuidv4();
+    return newReceiptId
+  } catch (e) {
+    console.error()
+  }
+})
+//-----------------------------------------------//
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -70,6 +134,8 @@ function createWindow() {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }

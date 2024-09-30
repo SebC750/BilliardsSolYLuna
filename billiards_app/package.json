@@ -22,7 +22,9 @@
     "@electron-toolkit/utils": "^3.0.0",
     "bootstrap": "^5.3.3",
     "nedb": "^1.8.0",
-    "react-bootstrap": "^2.10.5"
+    "nedb-promises": "^6.2.3",
+    "react-bootstrap": "^2.10.5",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",

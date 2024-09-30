@@ -7,15 +7,12 @@ function App() {
   
   return (
     <>
-      <Navigationbar> </Navigationbar>
-      
-      <Table tableNumber={1} tableColor={"red"}></Table>
-      <Table tableNumber={2} tableColor={"blue"}></Table>
-      <Table tableNumber={3} tableColor={"green"}></Table>
-      <OtherReceiptsTable></OtherReceiptsTable>
-      <ReceiptHistory id="ReceiptHistory"/>
-
-      
+      <Navigationbar/>
+      <Table tableNumber={1} tableColor={"red"}/>
+      <Table tableNumber={2} tableColor={"blue"}/>
+      <Table tableNumber={3} tableColor={"green"}/>
+      <OtherReceiptsTable/>
+      <ReceiptHistory/>  
     </>
   )
 }
