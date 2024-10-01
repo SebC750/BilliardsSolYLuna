@@ -1,8 +1,10 @@
-import { Table, Container, Row, Col, Button } from "react-bootstrap"
+
+import { Table, Container, Row, Col, Button, Modal } from "react-bootstrap"
 import PoolTableLogo from "../assets/images/pooltable.png"
 import { useState, useEffect } from "react"
 import OrderModal from "./OrderModal.jsx"
-import { insertOrder, generateNewReceiptID } from "../utilities/dbOperations.js"
+import { insertOrder, updateOrderAsPaid, generateNewReceiptID, getOrdersByReceiptID, deleteOrder } from "../utilities/dbOperations.js"
+import "../assets/main.css"
 const PoolTable = ({ tableNumber, tableColor }) => {
 
        const [timeStart, setTimeStart] = useState(false);
@@ -13,64 +15,55 @@ const PoolTable = ({ tableNumber, tableColor }) => {
        const [endTime, setEndTime] = useState("")
        const [addOrderPrompt, setAddOrderPrompt] = useState(false)
        const [orderList, setOrderList] = useState([])
+       const [orderListPrice, setOrderListPrice] = useState(0)
        const [tablePrice, setTablePrice] = useState(0)
        const [totalPrice, setTotalPrice] = useState(0)
        const [totalReceipt, showTotalReceipt] = useState(false)
        const [totalTimeElapsed, setTotalTimeElapsed] = useState("")
-       
-       
-       async function handleAddPurchase(itemName, itemPrice, quantity, clientName) {
+       const [showModal, setShowModal] = useState(false)
+       const [showPaidModal, setShowPaidModal] = useState(false);
+       const [receiptID, setReceiptID] = useState("")
+       const [selectedOrderID, setSelectedOrderID] = useState("")
+
+       async function handleAddPurchase(clientName, itemPrice, quantity, itemName) {
+              console.log("Adding Purchase:", { itemName, itemPrice, quantity, clientName });
               setAddOrderPrompt(false)
               let orderDate = new Date()
-              let orderDay = "" + orderDate.getDate()
-              if (orderDate.getDate() < 10) {
-                     orderDay = "0" + orderDate.getDate()
-              }
-              let dateString = (orderDate.getMonth() + 1) + "/" + orderDay + "/" + orderDate.getFullYear() + ", " + orderDate.getHours() + ":" + orderDate.getMinutes() + ":" + orderDate.getSeconds();
+              let formattedDate = orderDate.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
               let order = {
                      clientName: clientName,
+                     receiptID: receiptID,
                      table: tableNumber,
                      quantity: quantity,
                      product: itemName,
                      price: itemPrice * quantity,
                      status: 'sin pagar',
-                     date: dateString
+                     date: formattedDate
               };
-
               setOrderList([...orderList, order]);
-              const response = await insertOrder(order)
+              await insertOrder(order)
        }
 
        const calculateTotalPrice = () => {
               let h = Math.floor(time / 3600).toFixed(0);
               let m = Math.floor((time % 3600) / 60).toFixed(0);
               let s = (time % 60).toFixed(0);
-
               let totalTimeElapsed = h.toString().padStart(2, '0') + " : " + m.toString().padStart(2, '0') + " : " + s.toString().padStart(2, '0');
-
               setTotalTimeElapsed(totalTimeElapsed);
-
               let total = 0;
               orderList.forEach((val) => {
                      total += val.price;
               });
-
-              console.log(time);
-
+              setOrderListPrice(total)
               let tablePrice = (20 * h) + (20 / 60 * m) + (20 / 3600 * s);
               setTablePrice(tablePrice);
-
               let totalPrice = tablePrice + total;
-
               let salesTax = totalPrice * 0.08875;
               let totalPriceWithSales = (Math.round((totalPrice + salesTax) * 100) / 100).toFixed(2);
-
               setTotalPrice(totalPriceWithSales);
-
        }
 
        const handleTimerEndClick = () => {
-              
               setTimeStart(false)
               setShowStartButton(false)
               setShowEndButton(false)
@@ -90,17 +83,15 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               setTimeStart(true)
               setShowEndButton(true)
               setShowStartButton(false)
-              
-              setOrderList([])
+              generateNewID()
        }
+       const generateNewID = async () => {
+              const newReceiptID = await generateNewReceiptID();
+              setReceiptID(newReceiptID)
+       }
+       const handleOpenAddOrderModal = () => setAddOrderPrompt(true)
 
-       const handleOpenAddOrderModal = () => {
-              setAddOrderPrompt(true)
-       }
-
-       const closeOrderModal = () => {
-              setAddOrderPrompt(false)
-       }
+       const closeOrderModal = () => setAddOrderPrompt(false)
 
        const handleClearTable = () => {
               setShowStartButton(true)
@@ -109,7 +100,11 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               setOrderList([])
               setStartTime("")
               setEndTime("")
+              setReceiptID("")
               showTotalReceipt(false)
+              setTablePrice(0)
+              setOrderListPrice(0)
+              setTotalPrice(0)
               setTime(0)
        }
 
@@ -127,7 +122,6 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                      }
                      setStartTime(hourTo12.toString().padStart(2, '0') + ":" + startDate.getMinutes().toString().padStart(2, '0') + ":" + startDate.getSeconds().toString().padStart(2, '0') + am_pm_time)
                      interval = setInterval(() => {
-
                             var elapsed = new Date().getTime() - startDate.getTime()
                             var currentTime = (startSeconds + elapsed) * 0.001
                             console.log(Math.round(currentTime))
@@ -140,91 +134,151 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               }
               return () => clearInterval(interval)
        }, [timeStart])
+       const handleOpenPaidModal = (selectedOrderID) => {
+              setShowPaidModal(true)
+              setSelectedOrderID(selectedOrderID)
+       }
+       const handleClosePaidModal = () => setShowPaidModal(false)
+       const handleOpenModal = (selectedOrderID) => {
+              setShowModal(true)
+              setSelectedOrderID(selectedOrderID)
+       }
+       const handleCloseModal = () => showPaidModal(false)
+       const handleMarkAsPaid = async () => {
+              setShowPaidModal(false)
+              await updateOrderAsPaid(selectedOrderID)
+              setSelectedOrderID("")
+       }
+       const handleDeleteOrder = async () => {
+              setShowModal(false)
+              await deleteOrder(selectedOrderID)
+              setSelectedOrderID("")
+       }
+       async function getAllReceiptOrders(receiptID) {
+              const allReceiptOrders = await getOrdersByReceiptID(receiptID)
+              console.log(allReceiptOrders)
+              if (allReceiptOrders) {
+                     setOrderList(allReceiptOrders)
+              }
+              else {
+                     setOrderList([])
+              }
+       }
+       useEffect(() => {
+              getAllReceiptOrders(receiptID)
+       }, [receiptID, addOrderPrompt, selectedOrderID])
 
        return (
               <>
-                     <Container style={{ borderStyle: "solid", borderWidth: 2, borderColor: tableColor, paddingBottom: 100 }}>
-
-                            <div style={{ backgroundColor: tableColor, padding: 10, color: "white", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                   Mesa {tableNumber}
+                     <Container >
+                            <div className="pool-table-title" style={{ backgroundColor: tableColor }}>
+                                   <span style={{ fontSize: 24 }}>  Mesa {tableNumber} </span>
                                    {showStartButton ? (
                                           <>
                                                  <Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleTimerStartClick}> Comenzar tiempo</Button>
                                           </>
                                    ) : showEndButton ? (<Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleTimerEndClick}> Terminar tiempo</Button>) : null}
-
                             </div>
-                            <Row>
-                                   <Col>
-                                          <img src={PoolTableLogo} alt="Pool table logo" />
-                                   </Col>
-                                   <Col>
-                                          <div className="start-time-display">
-                                                 Tiempo comenzado: {startTime}
-                                          </div>
-                                          <div className="current-time-display">
-                                                 Duracion de tiempo:
-                                                 {startTime ? (
-                                                        <>
-                                                               <span> {("0" + Math.floor((time / 3600) % 60)).slice(-2)}:</span>
-                                                               <span> {("0" + Math.floor((time / 60) % 60)).slice(-2)}:</span>
-                                                               <span> {("0" + Math.floor((time / 1) % 60)).slice(-2)}</span>
-                                                        </>
-                                                 ) : null}
-
-                                          </div>
-                                          <div className="end-time-display">
-                                                 Tiempo terminado: {endTime}
-                                          </div>
-                                   </Col>
-                            </Row>
-
-                            <Table style={{ overflow: "scroll" }}>
-                                   <thead>
-                                          
-                                          <tr>
-                                                 <th> Fecha</th>
-                                                 <th> Nombre de cliente</th>
-                                                 <th> Cantidad</th>
-                                                 <th> Producto</th>
-                                                 <th> Precio</th>
-                                                 <th> Estado</th>
-                                          </tr>
-
-                                   </thead>
-                                   <tbody>
-                                          {orderList.map((val, index) => (
-                                                 <tr key={index}>
-                                                        <td>{val.date}</td>
-                                                        <td>{val.clientName}</td>
-                                                        <td>{val.quantity}</td>
-                                                        <td>{val.product}</td>
-                                                        <td>{val.price}</td>
-                                                        <td>{val.status}</td>
+                            <Container className="table-container" style={{ borderColor: tableColor }}>
+                                   <Row>
+                                          <Col>
+                                                 <img src={PoolTableLogo} alt="Pool table logo" />
+                                          </Col>
+                                          <Col className="time-displays">
+                                                 <div className="start-time-display">
+                                                        <strong> Tiempo comenzado: </strong> {startTime}
+                                                 </div>
+                                                 <div className="current-time-display">
+                                                        <strong> Duracion de tiempo: </strong>
+                                                        {startTime ? (
+                                                               <>
+                                                                      <span> {("0" + Math.floor((time / 3600) % 60)).slice(-2)}:</span>
+                                                                      <span> {("0" + Math.floor((time / 60) % 60)).slice(-2)}:</span>
+                                                                      <span> {("0" + Math.floor((time / 1) % 60)).slice(-2)}</span>
+                                                               </>
+                                                        ) : null}
+                                                 </div>
+                                                 <div className="end-time-display">
+                                                        <strong> Tiempo terminado: </strong> {endTime}
+                                                 </div>
+                                          </Col>
+                                   </Row>
+                                   {receiptID ? (<p> {receiptID} </p>) : null}
+                                   <Table style={{ overflow: "scroll" }}>
+                                          <thead>
+                                                 <tr>
+                                                        <th> ID </th>
+                                                        <th> Fecha</th>
+                                                        <th> Nombre de cliente</th>
+                                                        <th> Cantidad</th>
+                                                        <th> Producto</th>
+                                                        <th> Precio</th>
+                                                        <th> Estado</th>
+                                                        <th> </th>
                                                  </tr>
-                                          ))}
-                                   </tbody>
+                                          </thead>
+                                          <tbody>
+                                                 {orderList.map((val) => (
+                                                        <tr key={val._id}>
+                                                               <td>{val._id}</td>
+                                                               <td>{val.date}</td>
+                                                               <td>{val.clientName}</td>
+                                                               <td>{val.quantity}</td>
+                                                               <td>{val.product}</td>
+                                                               <td>${val.price}</td>
+                                                               <td style={{ color: val.status === "sin pagar" ? "red" : "green" }}> {val.status} </td>
+                                                               <td> <Button variant="success" onClick={() => handleOpenPaidModal(val._id)}> Cancelar </Button> <Button variant="danger" onClick={() => handleOpenModal(val._id)}> Borrar </Button></td>
+
+                                                        </tr>
+
+                                                 ))}
+                                          </tbody>
+                                   </Table>
                                    {timeStart ? (
                                           <Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleOpenAddOrderModal}> Anadir orden</Button>
                                    ) : null}
-
-                            </Table>
-                            {totalReceipt ? (
-                                   <>
-                                          <div >
-
-                                                 <strong style={{ padding: 10 }}> Tiempo de Mesa {totalTimeElapsed}: ${tablePrice.toFixed(2)} </strong>
-                                                 <strong> Sales tax: 8.875%</strong>
-                                                 <strong> Total: ${totalPrice}  </strong>
-
-                                          </div>
-                                          <Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleClearTable}> Limpiar mesa</Button>
-                                   </>
-
-                            ) : null}
-
-                            <OrderModal isOpen={addOrderPrompt} handleAddPurchase={handleAddPurchase} close={closeOrderModal}> </OrderModal>
+                                   {totalReceipt ? (
+                                          <>
+                                                 <div className="total-receipt-title" style={{ backgroundColor: tableColor }}> Recibo Total </div>
+                                                 <Table>
+                                                        <thead> </thead>
+                                                        <tbody>
+                                                               <tr> <td> Total de productos </td>        <td> ${orderListPrice.toFixed(2)}     </td> </tr>
+                                                               <tr> <td> Total de mesa </td>             <td> ${tablePrice.toFixed(2)}         </td> </tr>
+                                                               <tr> <td> Sales tax </td>                 <td> 8.875%                           </td> </tr>
+                                                               <tr> <td> <strong> Total </strong>  </td> <td> <strong> ${totalPrice} </strong> </td> </tr>
+                                                        </tbody>
+                                                 </Table>
+                                                 <Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleClearTable}> Limpiar mesa</Button>
+                                          </>
+                                   ) : null}
+                                   <OrderModal isOpen={addOrderPrompt} handleAddPurchase={handleAddPurchase} close={closeOrderModal} currentReceiptID={null} isOtherReceipt={false}> </OrderModal>
+                            </Container>
                      </Container>
+                     <Modal show={showModal}>
+                            <Modal.Header>
+                                   <Modal.Title>¿Estás seguro?</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                   <p>¿Estás seguro de que quieres borrar esta orden? ¡Esta acción es permanente!</p>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                   <Button variant="primary" onClick={handleCloseModal}>Cancelar</Button>
+                                   <Button variant="danger" onClick={() => handleDeleteOrder()}>Borrar del todo</Button>
+                            </Modal.Footer>
+                     </Modal>
+                     <Modal show={showPaidModal}>
+                            <Modal.Header>
+                                   <Modal.Title>¿Estás seguro?</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                   <p>¿Estás seguro de que esta orden ha sido pagada? ¡Esta acción es permanente!</p>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                   <Button variant="primary" onClick={handleClosePaidModal}>Cancelar</Button>
+                                   <Button variant="success" onClick={() => handleMarkAsPaid()}>Sí, está pagado</Button>
+                            </Modal.Footer>
+                     </Modal>
               </>
        )
 }

@@ -1,8 +1,8 @@
-import { Modal, Form, Dropdown, Col } from "react-bootstrap";
+import { Modal, Form, Dropdown, Col, Button } from "react-bootstrap";
 import items from "../utilities/items.js";
 import { useState, useEffect } from "react";
 
-const OrderModal = ({ isOpen, handleAddPurchase, close }) => {
+const OrderModal = ({ isOpen, handleAddPurchase, close, currentReceiptID, isOtherReceipt }) => {
     const [show, setShow] = useState(isOpen);
     const [selectedItem, setSelectedItem] = useState(null);
     const [clientName, setClientName] = useState('');
@@ -23,18 +23,44 @@ const OrderModal = ({ isOpen, handleAddPurchase, close }) => {
         setQuantity(e.target.value);
     };
 
+    const handleItemSelect = (itemName, itemPrice) => {
+        setSelectedItem({ itemName, itemPrice });
+    };
+
     const addPurchase = (e) => {
         e.preventDefault();
+
+        
         if (!selectedItem || quantity <= 0) {
-            showErrorMessage("Por favor ingrese la información requerida.");
-        } else {
-            showErrorMessage(null);
-            handleAddPurchase(selectedItem.itemName, selectedItem.itemPrice, quantity, clientName);
-            setQuantity('');
-            setClientName('');
-            setSelectedItem(null);
-            closeModal();
+            showErrorMessage("Por favor seleccione un producto y una cantidad válida.");
+            return;
         }
+
+        
+        if (!isOtherReceipt && clientName.trim() === '') {
+            showErrorMessage("Por favor ingrese el nombre del cliente.");
+            return;
+        }
+
+        
+        showErrorMessage(null);
+
+        
+        if (!isOtherReceipt) {
+            handleAddPurchase(clientName, selectedItem.itemPrice, quantity, selectedItem.itemName);
+        } else {
+            handleAddPurchase(currentReceiptID, selectedItem.itemName, selectedItem.itemPrice, quantity);
+        }
+
+        
+        resetForm();
+        closeModal();
+    };
+
+    const resetForm = () => {
+        setQuantity('');
+        setClientName('');
+        setSelectedItem(null);
     };
 
     return (
@@ -56,31 +82,57 @@ const OrderModal = ({ isOpen, handleAddPurchase, close }) => {
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                                 {items.map((val) => (
-                                    <div key={val.item_id}>
-                                        <Dropdown.Item onClick={() => setSelectedItem({ itemName: val.item_name, itemPrice: val.item_price })}>
-                                            {val.item_name} {val.item_price}
-                                        </Dropdown.Item>
-                                    </div>
+                                    <Dropdown.Item 
+                                        key={val.item_id} 
+                                        onClick={() => handleItemSelect(val.item_name, val.item_price)}
+                                    >
+                                        {val.item_name} - ${val.item_price}
+                                    </Dropdown.Item>
                                 ))}
                             </Dropdown.Menu>
                         </Dropdown>
+                        {selectedItem ? (
+                            <p>Producto: {selectedItem.itemName} | Precio: ${selectedItem.itemPrice}</p>
+                        ) : null}
+
                         <Form>
                             <Form.Group>
                                 <Form.Label htmlFor="quantityInput">Cantidad</Form.Label>
-                                <Form.Control type="number" id="quantityInput" onChange={(e) => handleQuantityChange(e)} value={quantity}></Form.Control>
-                                <Form.Label htmlFor="nameInput">Nombre de cliente</Form.Label>
-                                <Form.Control type="text" id="nameInput" onChange={(e) => handleClientNameChange(e)} value={clientName}></Form.Control>
+                                <Form.Control 
+                                    type="number" 
+                                    id="quantityInput" 
+                                    min="1"
+                                    onChange={handleQuantityChange} 
+                                    value={quantity} 
+                                    placeholder="Ingrese la cantidad"
+                                    required
+                                />
+
+                                {!isOtherReceipt && (
+                                    <>
+                                        <Form.Label htmlFor="nameInput">Nombre de cliente</Form.Label>
+                                        <Form.Control 
+                                            type="text" 
+                                            id="nameInput" 
+                                            onChange={handleClientNameChange} 
+                                            value={clientName} 
+                                            placeholder="Ingrese el nombre del cliente"
+                                            required
+                                        />
+                                    </>
+                                )}
                             </Form.Group>
                         </Form>
-                        <Col>
-                            {errorMessage ? (
+
+                        {errorMessage && (
+                            <Col>
                                 <p style={{ color: "red", fontSize: "12px" }}>{errorMessage}</p>
-                            ) : null}
-                        </Col>
+                            </Col>
+                        )}
                     </Modal.Body>
                     <Modal.Footer>
-                        <button type="button" className="btn btn-primary" onClick={closeModal}>Cancelar orden</button>
-                        <button type="button" className="btn btn-primary" onClick={(e) => addPurchase(e)}>Ingresar</button>
+                        <Button variant="danger" onClick={closeModal}>Cancelar orden</Button>
+                        <Button onClick={addPurchase}>Ingresar</Button>
                     </Modal.Footer>
                 </Modal>
             ) : null}

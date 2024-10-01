@@ -14,78 +14,111 @@ const db = new Datastore({ filename: "orders.db", autoload: true});
 
 //-------------------------------------------//
 //Database API routes
-ipcMain.handle('get-all', async () =>{
+ipcMain.handle('get-all', async (err, {offset, limit}) =>{
   try {
-    const getAllDatabaseValues = await db.find({});
-    return getAllDatabaseValues;
+    const totalRecords = await db.count({});  
+    const getAllDatabaseValues = await db.find({}).skip(offset).limit(limit).sort({ date: -1 });
+    return {
+      orders: getAllDatabaseValues,
+      totalCount: totalRecords 
+    };
   } catch (error) {
     console.error('Could not get all of the database records! Error:', error);
     throw error;
   }
 })
 
-ipcMain.handle('get-product', async (err, data) =>{
+ipcMain.handle('get-product', async (event, data, {offset, limit}) =>{
   try{
-    const getAllDatabaseValues = await db.find({product: data})
-    return getAllDatabaseValues
-  }catch(e){
+    const totalRecords = await db.count({product: data})
+    const getAllDatabaseValues = await db.find({product: data}).skip(offset).limit(limit).sort({product: -1})
+    return {
+      orders: getAllDatabaseValues,
+      totalCount: totalRecords
+    }
+  }catch(error){
     console.error('Could not get all of the database records by products! Error:', error);
     throw error;
   }
   
 })
 
-ipcMain.handle('get-name', async (err, data) =>{
+ipcMain.handle('get-name', async (event, data, offset, limit) =>{
   try{
-    const getAllDatabaseValues = await db.find({ordername: data})
-    return getAllDatabaseValues
-  }catch(e){
+    const totalRecords = await db.count({clientName: data})
+    const getAllDatabaseValues = await db.find({clientName: data}).skip(offset).limit(limit).sort({clientName: -1})
+    return {
+      orders: getAllDatabaseValues,
+      totalCount: totalRecords
+    }
+  }catch(error){
     console.error('Could not get all of the database records by client name! Error:', error);
     throw error;
   }
   
 })
 
-ipcMain.handle('get-date', async (err, data) =>{
+ipcMain.handle('get-date', async (event, data, offset, limit) =>{
   try{
-    const getAllDatabaseValues = await db.find({date: data})
-    return getAllDatabaseValues
-  }catch(e){
+    const totalRecords = await db.count({date: data})
+    const getAllDatabaseValues = await db.find({date: data}).skip(offset).limit(limit).sort({date: -1})
+    return {
+      orders: getAllDatabaseValues,
+      totalCount: totalRecords
+    }
+  }catch(error){
     console.error('Could not get all of the database records by date! Error:', error);
     throw error;
   }
   
 })
 
-ipcMain.handle('get-status', async (err, data) => {
+ipcMain.handle('get-status', async (event, data, offset, limit) => {
   try{
-    const getAllDatabaseValues = await db.find({status: data})
-    return getAllDatabaseValues
-  }catch(e){
+    const totalRecords = await db.count({status: data})
+    const getAllDatabaseValues = await db.find({status: data}).skip(offset).limit(limit).sort({date: -1})
+    return {
+      orders: getAllDatabaseValues,
+      totalCount: totalRecords
+    }
+  }catch(error){
     console.error('Could not get all of the database records by pay status! Error:', error);
     throw error;
   }
   
 })
 
-ipcMain.handle('get-all-by-table', async (err, data) =>{
+ipcMain.handle('get-table', async (event, data, offset, limit) =>{
   try{
-    const getAllDatabaseValues = db.find({mesa: data})
-    return getAllDatabaseValues
-  }catch(e){
+    const totalRecords = await db.count({table: data})
+    const getAllDatabaseValues = db.find({table: data}).skip(offset).limit(limit).sort({date: -1})
+    return {
+      orders: getAllDatabaseValues,
+      totalCount: totalRecords
+    }
+  }catch(error){
     console.error('Could not get all of the database records by table! Error:', error);
     throw error;
   }
   
 })
-
-ipcMain.handle('insert-order', async (err, data) =>{
+ipcMain.handle('get-receipt-orders', async (event, data) =>{
+  try{
+    const getAllDatabaseValues = db.find({receiptID: data}).sort({date: 1})
+    return getAllDatabaseValues
+  }catch(error){
+    console.error('Could not get all of the database records by receipts! Error:', error);
+    throw error;
+  }
+  
+})
+ipcMain.handle('insert-order', async (event, data) =>{
   try{
     db.insert(data, function(err, newData){
       console.log(newData)
     })
     return "order saved to db"
-  }catch(e){
+  }catch(error){
     console.error('Could not insert the order into the database. Error:', error);
     throw error;
   }
@@ -97,19 +130,31 @@ ipcMain.handle('delete-order', async (err, data) =>{
     db.remove({_id: data}, function(err, newData){
       console.log(newData)
     })
-  }catch(e){
+  }catch(error){
+    console.error('Could not delete the order from the database. Error:', error);
+  }
+  
+})
+
+ipcMain.handle('delete-all-orders-from-receipt', async (err, data) =>{
+  try{
+    db.remove({receiptID: data}, function(err, newData){
+      console.log(newData)
+    })
+  }catch(error){
     console.error('Could not delete the order from the database. Error:', error);
   }
   
 })
 
 ipcMain.handle('mark-order-as-paid', async(err, data) => {
+  console.log(data)
   try{
     db.update({_id: data},{$set:{status: "cancelado"}}, function(err, newData) {
       console.log(newData)
     })
     return "order set to paid."
-  }catch(e){
+  }catch(error){
     console.error('Unable to mark the order as paid. Error:', error);
   }
   
@@ -119,8 +164,8 @@ ipcMain.handle('generate-new-receipt-id', async () =>{
   try {
     const newReceiptId = uuidv4();
     return newReceiptId
-  } catch (e) {
-    console.error()
+  } catch (error) {
+    console.error('Generate new receipt ID. Error: ', error)
   }
 })
 //-----------------------------------------------//
@@ -128,10 +173,11 @@ ipcMain.handle('generate-new-receipt-id', async () =>{
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
+    width: 1200,
     height: 670,
     show: false,
     autoHideMenuBar: true,
+    resizable:false,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       nodeIntegration: false,
