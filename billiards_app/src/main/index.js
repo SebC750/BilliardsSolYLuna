@@ -1,5 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join, resolve} from 'path'
+import { join} from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Datastore from 'nedb-promises';
@@ -14,7 +14,7 @@ const db = new Datastore({ filename: "orders.db", autoload: true});
 
 //-------------------------------------------//
 //Database API routes
-ipcMain.handle('get-all', async (err, {offset, limit}) =>{
+ipcMain.handle('get-all', async (event, {offset, limit}) =>{
   try {
     const totalRecords = await db.count({});  
     const getAllDatabaseValues = await db.find({}).skip(offset).limit(limit).sort({ date: -1 });
@@ -43,7 +43,7 @@ ipcMain.handle('get-product', async (event, data, {offset, limit}) =>{
   
 })
 
-ipcMain.handle('get-name', async (event, data, offset, limit) =>{
+ipcMain.handle('get-name', async (event, data, {offset, limit}) =>{
   try{
     const totalRecords = await db.count({clientName: data})
     const getAllDatabaseValues = await db.find({clientName: data}).skip(offset).limit(limit).sort({clientName: -1})
@@ -58,10 +58,11 @@ ipcMain.handle('get-name', async (event, data, offset, limit) =>{
   
 })
 
-ipcMain.handle('get-date', async (event, data, offset, limit) =>{
+ipcMain.handle('get-date', async (event, data, {offset, limit}) =>{
   try{
-    const totalRecords = await db.count({date: data})
-    const getAllDatabaseValues = await db.find({date: data}).skip(offset).limit(limit).sort({date: -1})
+    const dateRegex = new RegExp("^" + data.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
+    const totalRecords = await db.count({date: {$regex: dateRegex}})
+    const getAllDatabaseValues = await db.find({date: {$regex: dateRegex}}).skip(offset).limit(limit).sort({date: -1})  
     return {
       orders: getAllDatabaseValues,
       totalCount: totalRecords
@@ -73,7 +74,7 @@ ipcMain.handle('get-date', async (event, data, offset, limit) =>{
   
 })
 
-ipcMain.handle('get-status', async (event, data, offset, limit) => {
+ipcMain.handle('get-status', async (event, data, {offset, limit}) => {
   try{
     const totalRecords = await db.count({status: data})
     const getAllDatabaseValues = await db.find({status: data}).skip(offset).limit(limit).sort({date: -1})
@@ -88,10 +89,10 @@ ipcMain.handle('get-status', async (event, data, offset, limit) => {
   
 })
 
-ipcMain.handle('get-table', async (event, data, offset, limit) =>{
+ipcMain.handle('get-table', async (event, data, {offset, limit}) =>{
   try{
     const totalRecords = await db.count({table: data})
-    const getAllDatabaseValues = db.find({table: data}).skip(offset).limit(limit).sort({date: -1})
+    const getAllDatabaseValues = await db.find({table: data}).skip(offset).limit(limit).sort({date: -1})
     return {
       orders: getAllDatabaseValues,
       totalCount: totalRecords
@@ -102,6 +103,7 @@ ipcMain.handle('get-table', async (event, data, offset, limit) =>{
   }
   
 })
+
 ipcMain.handle('get-receipt-orders', async (event, data) =>{
   try{
     const getAllDatabaseValues = db.find({receiptID: data}).sort({date: 1})
@@ -112,11 +114,10 @@ ipcMain.handle('get-receipt-orders', async (event, data) =>{
   }
   
 })
+
 ipcMain.handle('insert-order', async (event, data) =>{
   try{
-    db.insert(data, function(err, newData){
-      console.log(newData)
-    })
+    db.insert(data)
     return "order saved to db"
   }catch(error){
     console.error('Could not insert the order into the database. Error:', error);
@@ -125,34 +126,46 @@ ipcMain.handle('insert-order', async (event, data) =>{
   
 })
 
-ipcMain.handle('delete-order', async (err, data) =>{
+ipcMain.handle('delete-order', async (event, receiptID, orderID) =>{
   try{
-    db.remove({_id: data}, function(err, newData){
-      console.log(newData)
-    })
+    db.remove({_id: orderID, receiptID: receiptID})
   }catch(error){
     console.error('Could not delete the order from the database. Error:', error);
   }
   
 })
 
-ipcMain.handle('delete-all-orders-from-receipt', async (err, data) =>{
+ipcMain.handle('delete-order-by-date', async (event, receiptID, date) =>{
   try{
-    db.remove({receiptID: data}, function(err, newData){
-      console.log(newData)
-    })
+    db.remove({date: date, receiptID: receiptID})
   }catch(error){
     console.error('Could not delete the order from the database. Error:', error);
   }
   
 })
 
-ipcMain.handle('mark-order-as-paid', async(err, data) => {
-  console.log(data)
+ipcMain.handle('delete-all-orders-from-receipt', async (event, data) =>{
   try{
-    db.update({_id: data},{$set:{status: "cancelado"}}, function(err, newData) {
-      console.log(newData)
-    })
+    db.remove({receiptID: data})
+  }catch(error){
+    console.error('Could not delete the order from the database. Error:', error);
+  }
+  
+})
+
+ipcMain.handle('mark-order-as-paid', async(event, receiptID, orderID) => {
+  try{
+    db.update({_id: orderID, receiptID: receiptID},{$set:{status: "cancelado"}})
+    return "order set to paid."
+  }catch(error){
+    console.error('Unable to mark the order as paid. Error:', error);
+  }
+  
+})
+
+ipcMain.handle('mark-order-as-paid-by-date', async(event, receiptID, date) => {
+  try{
+    db.update({date: date, receiptID: receiptID},{$set:{status: "cancelado"}})
     return "order set to paid."
   }catch(error){
     console.error('Unable to mark the order as paid. Error:', error);

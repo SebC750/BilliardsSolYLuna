@@ -28,31 +28,21 @@ const OrderModal = ({ isOpen, handleAddPurchase, close, currentReceiptID, isOthe
     };
 
     const addPurchase = (e) => {
-        e.preventDefault();
-
-        
+        e.preventDefault();      
         if (!selectedItem || quantity <= 0) {
             showErrorMessage("Por favor seleccione un producto y una cantidad válida.");
             return;
-        }
-
-        
+        }  
         if (!isOtherReceipt && clientName.trim() === '') {
             showErrorMessage("Por favor ingrese el nombre del cliente.");
             return;
-        }
-
-        
-        showErrorMessage(null);
-
-        
+        }   
+        showErrorMessage(null);     
         if (!isOtherReceipt) {
             handleAddPurchase(clientName, selectedItem.itemPrice, quantity, selectedItem.itemName);
         } else {
             handleAddPurchase(currentReceiptID, selectedItem.itemName, selectedItem.itemPrice, quantity);
-        }
-
-        
+        }   
         resetForm();
         closeModal();
     };

@@ -1,7 +1,13 @@
 //Modularized db operations away from pages. Makes code clean and easy to follow.
-export async function getAllOrders(offset, limit) {
+
+class API {
+    constructor() {
+        
+    }
+
+async getAllOrders(offset, limit) {
     try {
-        console.log("Retrieving all data. Offset: "+offset+", Limit: "+limit)
+        
         const response = await window.api.getAll(offset, limit)
         return response
     } catch (e) {
@@ -9,19 +15,18 @@ export async function getAllOrders(offset, limit) {
     }
 
 }
-export async function getOrderByTable(table, offset, limit) {
+async getOrderByTable(table, offset, limit) {
     try {
-        console.log("Retrieving all data. Offset: "+offset+", Limit: "+limit)
-        const response = await window.api.getAllByTable(table, offset, limit)
+        
+        const response = await window.api.searchForTable(table, offset, limit)
         return response
     } catch (e) {
         console.error("Could not retrieve database records by table. Error: " + e)
-
     }
 }
-export async function getOrderByName(name, offset, limit) {
+async getOrderByName(name, offset, limit) {
     try {
-        console.log("Retrieving all data. Offset: "+offset+", Limit: "+limit)
+        
         const response = await window.api.searchForName(name, offset, limit)
         return response
     } catch (e) {
@@ -29,9 +34,9 @@ export async function getOrderByName(name, offset, limit) {
 
     }
 }
-export async function getOrderByProduct(product, offset, limit) {
+async getOrderByProduct(product, offset, limit) {
     try {
-        console.log("Retrieving all data. Offset: "+offset+", Limit: "+limit)
+       
         const response = await window.api.searchForProduct(product, offset, limit)
         return response
     } catch (e) {
@@ -39,7 +44,7 @@ export async function getOrderByProduct(product, offset, limit) {
 
     }
 }
-export async function getOrderByDate(date, offset, limit) {
+async getOrderByDate(date, offset, limit) {
     try {
         console.log("Retrieving all data")
         const response = await window.api.searchForDate(date, offset, limit)
@@ -49,7 +54,7 @@ export async function getOrderByDate(date, offset, limit) {
 
     }
 }
-export async function getOrderByStatus(status) {
+async getOrderByStatus(status) {
     try {
         console.log("Retrieving all data")
         const response = await window.api.searchForStatus(status)
@@ -59,7 +64,7 @@ export async function getOrderByStatus(status) {
 
     }
 }
-export async function getOrdersByReceiptID(receiptID) {
+async getOrdersByReceiptID(receiptID) {
     try {
         console.log("Retrieving all data")
         const response = await window.api.searchForReceiptOrders(receiptID)
@@ -69,7 +74,7 @@ export async function getOrdersByReceiptID(receiptID) {
 
     }
 }
-export async function insertOrder(data) {
+async insertOrder(data) {
     try {
         console.log("Inserting data")
         const response = await window.api.insertOrder(
@@ -91,41 +96,62 @@ export async function insertOrder(data) {
 
     }
 }
-export async function updateOrderAsPaid(dataID) {
+async updateOrderAsPaid(receiptID, orderID){
     try {
         console.log("Retrieving all data")
-        const response = await window.api.changeOrderStatus(dataID)
+        const response = await window.api.changeOrderStatus(receiptID, orderID)
+        console.log(response)
+    } catch (e) {
+        console.error("Could not update paid order. Error: " + e)
+    }
+}
+async updateOrderAsPaidByDate(receiptID, date) {
+    try {
+        console.log("Retrieving all data")
+        const response = await window.api.changeOrderStatusByDate(receiptID, date)
         console.log(response)
     } catch (e) {
         console.error("Could not update paid order. Error: " + e)
 
     }
 }
-export async function deleteOrder(dataID) {
+async deleteOrder(receiptID, orderID) {
     try {
         console.log("Retrieving all data")
-        const response = await window.api.deleteOrder(dataID)
+        const response = await window.api.deleteOrder(receiptID, orderID)
         console.log(response)
     } catch (e) {
         console.error("Could not delete order. Error: " + e)
 
     }
 }
-export async function deleteAllOrdersFromReceipt(dataID){
+async deleteOrderByDate(receiptID, date) {
     try {
         console.log("Retrieving all data")
-        const response = await window.api.deleteAllOrdersFromReceipt(dataID)
+        const response = await window.api.deleteOrderByDate(receiptID, date)
         console.log(response)
     } catch (e) {
         console.error("Could not delete order. Error: " + e)
 
     }
 }
-export async function generateNewReceiptID(){
-    try{
+async deleteAllOrdersFromReceipt(receiptID) {
+    try {
+        console.log("Retrieving all data")
+        const response = await window.api.deleteAllOrdersFromReceipt(receiptID)
+        console.log(response)
+    } catch (e) {
+        console.error("Could not delete order. Error: " + e)
+
+    }
+}
+async generateNewReceiptID() {
+    try {
         const response = await window.api.generateNewReceiptID()
         return response
-    }catch(e){
+    } catch (e) {
         console.error("Generate new receipt id. Error: " + e)
     }
 }
+}
+export default API

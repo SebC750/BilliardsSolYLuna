@@ -3,8 +3,10 @@ import { Table, Container, Row, Col, Button, Modal } from "react-bootstrap"
 import PoolTableLogo from "../assets/images/pooltable.png"
 import { useState, useEffect } from "react"
 import OrderModal from "./OrderModal.jsx"
-import { insertOrder, updateOrderAsPaid, generateNewReceiptID, getOrdersByReceiptID, deleteOrder } from "../utilities/dbOperations.js"
+import API from "../utilities/dbOperations.js"
 import "../assets/main.css"
+
+const api = new API()
 const PoolTable = ({ tableNumber, tableColor }) => {
 
        const [timeStart, setTimeStart] = useState(false);
@@ -26,10 +28,12 @@ const PoolTable = ({ tableNumber, tableColor }) => {
        const [selectedOrderID, setSelectedOrderID] = useState("")
 
        async function handleAddPurchase(clientName, itemPrice, quantity, itemName) {
-              console.log("Adding Purchase:", { itemName, itemPrice, quantity, clientName });
+              
               setAddOrderPrompt(false)
               let orderDate = new Date()
-              let formattedDate = orderDate.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
+              let formattedDate = orderDate.toLocaleString("en-US", {timeZone: "America/New_York"})
+              
+              
               let order = {
                      clientName: clientName,
                      receiptID: receiptID,
@@ -41,7 +45,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                      date: formattedDate
               };
               setOrderList([...orderList, order]);
-              await insertOrder(order)
+              await api.insertOrder(order)
        }
 
        const calculateTotalPrice = () => {
@@ -52,7 +56,9 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               setTotalTimeElapsed(totalTimeElapsed);
               let total = 0;
               orderList.forEach((val) => {
-                     total += val.price;
+                     if(val.status === "sin pagar"){
+                            total += val.price;
+                     }       
               });
               setOrderListPrice(total)
               let tablePrice = (20 * h) + (20 / 60 * m) + (20 / 3600 * s);
@@ -86,7 +92,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               generateNewID()
        }
        const generateNewID = async () => {
-              const newReceiptID = await generateNewReceiptID();
+              const newReceiptID = await api.generateNewReceiptID();
               setReceiptID(newReceiptID)
        }
        const handleOpenAddOrderModal = () => setAddOrderPrompt(true)
@@ -101,6 +107,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               setStartTime("")
               setEndTime("")
               setReceiptID("")
+              setSelectedOrderID("")
               showTotalReceipt(false)
               setTablePrice(0)
               setOrderListPrice(0)
@@ -134,29 +141,34 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               }
               return () => clearInterval(interval)
        }, [timeStart])
+
        const handleOpenPaidModal = (selectedOrderID) => {
               setShowPaidModal(true)
               setSelectedOrderID(selectedOrderID)
        }
        const handleClosePaidModal = () => setShowPaidModal(false)
+
        const handleOpenModal = (selectedOrderID) => {
               setShowModal(true)
               setSelectedOrderID(selectedOrderID)
        }
-       const handleCloseModal = () => showPaidModal(false)
+
+       const handleCloseModal = () => setShowModal(false)
+
        const handleMarkAsPaid = async () => {
               setShowPaidModal(false)
-              await updateOrderAsPaid(selectedOrderID)
+              await api.updateOrderAsPaid(receiptID, selectedOrderID)
               setSelectedOrderID("")
        }
+
        const handleDeleteOrder = async () => {
               setShowModal(false)
-              await deleteOrder(selectedOrderID)
+              await api.deleteOrder(receiptID, selectedOrderID)
               setSelectedOrderID("")
        }
+
        async function getAllReceiptOrders(receiptID) {
-              const allReceiptOrders = await getOrdersByReceiptID(receiptID)
-              console.log(allReceiptOrders)
+              const allReceiptOrders = await api.getOrdersByReceiptID(receiptID)      
               if (allReceiptOrders) {
                      setOrderList(allReceiptOrders)
               }
@@ -164,6 +176,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                      setOrderList([])
               }
        }
+
        useEffect(() => {
               getAllReceiptOrders(receiptID)
        }, [receiptID, addOrderPrompt, selectedOrderID])
@@ -228,7 +241,6 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                                                                <td>${val.price}</td>
                                                                <td style={{ color: val.status === "sin pagar" ? "red" : "green" }}> {val.status} </td>
                                                                <td> <Button variant="success" onClick={() => handleOpenPaidModal(val._id)}> Cancelar </Button> <Button variant="danger" onClick={() => handleOpenModal(val._id)}> Borrar </Button></td>
-
                                                         </tr>
 
                                                  ))}
@@ -250,6 +262,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                                                         </tbody>
                                                  </Table>
                                                  <Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleClearTable}> Limpiar mesa</Button>
+                                                 
                                           </>
                                    ) : null}
                                    <OrderModal isOpen={addOrderPrompt} handleAddPurchase={handleAddPurchase} close={closeOrderModal} currentReceiptID={null} isOtherReceipt={false}> </OrderModal>

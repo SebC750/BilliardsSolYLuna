@@ -1,33 +1,37 @@
 import { Table, Container, Button, Modal } from "react-bootstrap";
 import Searchbar from "./Searchbar.jsx";
-import { getAllOrders, deleteOrder, updateOrderAsPaid } from "../utilities/dbOperations.js";
+import API from "../utilities/dbOperations.js";
 import { useState, useEffect } from "react";
 import "../assets/main.css";
 import PageNavigator from "./PageNavigator.jsx";
 
+const api = new API()
 const ReceiptHistory = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPaidModal, setShowPaidModal] = useState(false);
   const [orderHistory, updateOrderHistory] = useState([]);
   const [selectedOrderID, setSelectedOrderID] = useState("");
+  const [selectedReceiptID, setSelectedReceiptID] = useState("");
   const [totalRecords, setTotalRecords] = useState(0); 
   const [offset, setOffset] = useState(0); 
   const limit = 10; 
 
   async function getAllData(offset, limit) {
-    const allData = await getAllOrders(offset, limit); 
+    const allData = await api.getAllOrders(offset, limit); 
     console.log(allData)
     if (allData && allData.orders) {
       updateOrderHistory(allData.orders); 
       setTotalRecords(allData.totalCount); 
     }
   }
-  const handleDeleteOrder = (orderID) =>{
+  const handleDeleteOrder = (receiptID, orderID) =>{
      setSelectedOrderID(orderID);
+     setSelectedReceiptID(receiptID)
      setShowModal(true);
   }
-  const handleMarkAsPaid = (orderID) =>{
+  const handleMarkAsPaid = (receiptID,orderID) =>{
      setSelectedOrderID(orderID)
+     setSelectedReceiptID(receiptID)
      setShowPaidModal(true);
   }
   const handlePageClick = (pageNumber) => {
@@ -36,19 +40,21 @@ const ReceiptHistory = () => {
   };
 
   const handleRemoveOrder = async () => {
-    await deleteOrder(selectedOrderID);
+    await api.deleteOrder(selectedReceiptID, selectedOrderID);
     setShowModal(false);
     setSelectedOrderID("");
     getAllData(offset, limit); 
   };
+
   const handleGetAllDataAgain = (allData) =>{
     if (allData && allData.orders) {
       updateOrderHistory(allData.orders); 
       setTotalRecords(allData.totalCount); 
     }
   }
+
   const handleMarkAsPaidOrder = async () => {
-    await updateOrderAsPaid(selectedOrderID);
+    await api.updateOrderAsPaid(selectedReceiptID, selectedOrderID);
     setShowPaidModal(false);
     setSelectedOrderID("");
     getAllData(offset,limit); 
@@ -96,10 +102,10 @@ const ReceiptHistory = () => {
                       {order.status}
                     </td>
                     <td>
-                      <Button variant="danger" onClick={() => handleDeleteOrder(order._id)}>
+                      <Button variant="danger" onClick={() => handleDeleteOrder(order.receiptID, order._id)}>
                         Borrar
                       </Button>
-                      <Button variant="success" onClick={() => handleMarkAsPaid(order._id)}>
+                      <Button variant="success" onClick={() => handleMarkAsPaid(order.receiptID, order._id)}>
                         Cancelar
                       </Button>
                     </td>
@@ -118,7 +124,7 @@ const ReceiptHistory = () => {
             totalRecords={totalRecords} 
             handlePageClick={handlePageClick}
           />
-          <Button style={{marginTop: 20, marginLeft: "46%"}} onClick={() => getAllData()}> Refrescar </Button>
+          <Button size={"lg"} style={{marginTop: 20,width: "100%", marginBottom: 10}} onClick={() => getAllData()}> Refrescar </Button>
         </Container>
       </Container>
   

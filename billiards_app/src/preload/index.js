@@ -1,19 +1,20 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { generateNewReceiptID } from '../renderer/src/utilities/dbOperations'
 // Custom APIs for renderer
 const api = {
   getAll: (offset, limit) => ipcRenderer.invoke('get-all', { offset, limit }),
-  searchForTable: (data, offset, limit) => ipcRenderer.invoke('get-table', { data, offset, limit }),
-  searchForProduct: (data, offset, limit) => ipcRenderer.invoke('get-product', data, {offset, limit }),
-  searchForName: (data, offset, limit) => ipcRenderer.invoke('get-name', data, {offset, limit }),
-  searchForDate: (data, offset, limit) => ipcRenderer.invoke('get-date', data,{offset, limit }),
+  searchForTable: (data, offset, limit) => ipcRenderer.invoke('get-table', data, { offset, limit }),
+  searchForProduct: (data, offset, limit) => ipcRenderer.invoke('get-product', data, { offset, limit }),
+  searchForName: (data, offset, limit) => ipcRenderer.invoke('get-name', data, { offset, limit }),
+  searchForDate: (data, offset, limit) => ipcRenderer.invoke('get-date', data,{ offset, limit }),
   searchForStatus: (data, offset, limit) => ipcRenderer.invoke('get-status', data, { offset, limit }),
   searchForReceiptOrders: (data) => ipcRenderer.invoke('get-receipt-orders', data),
   insertOrder: (data) => ipcRenderer.invoke('insert-order', data ),
-  deleteOrder: (data) => ipcRenderer.invoke('delete-order', data ),
-  deleteAllOrdersFromReceipt: (data) => ipcRenderer.invoke('delete-all-orders-from-receipt', data ),
-  changeOrderStatus: (data) => ipcRenderer.invoke('mark-order-as-paid', data ), 
+  deleteOrder: (receiptID, orderID) => ipcRenderer.invoke('delete-order', receiptID, orderID),
+  deleteOrderByDate: (receiptID, date) => ipcRenderer.invoke('delete-order-by-date', receiptID, date),
+  deleteAllOrdersFromReceipt: (receiptID) => ipcRenderer.invoke('delete-all-orders-from-receipt', receiptID),
+  changeOrderStatus: (receiptID, orderID) => ipcRenderer.invoke('mark-order-as-paid', receiptID, orderID ), 
+  changeOrderStatusByDate: (receiptID, date) => ipcRenderer.invoke('mark-order-as-paid-by-date', receiptID, date ), 
   generateNewReceiptID: () => ipcRenderer.invoke('generate-new-receipt-id')
 }
 
