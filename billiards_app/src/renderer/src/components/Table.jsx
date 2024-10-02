@@ -216,7 +216,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                                                  </div>
                                           </Col>
                                    </Row>
-                                   {receiptID ? (<p> {receiptID} </p>) : null}
+                                   {receiptID ? (<p> ID: {receiptID} </p>) : null}
                                    <Table style={{ overflow: "scroll" }}>
                                           <thead>
                                                  <tr>
