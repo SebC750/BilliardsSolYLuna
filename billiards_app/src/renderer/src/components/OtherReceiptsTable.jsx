@@ -48,7 +48,7 @@ const OtherReceiptTable = () => {
         return receipt;
       });
     })
-    await api.deleteOrderByDate(receiptID, selectedOrderDate)
+    await api.deleteOrderByDate(selectedReceiptID, selectedOrderDate)
     setSelectedOrderDate("")
     setSelectedReceiptID("")
   }
@@ -155,7 +155,7 @@ const OtherReceiptTable = () => {
 
   return (
     <>
-      <Container style={{ overflow: "scroll" }}>
+      <Container >
         <div className="other-receipts-title" >
           Otros Recibos
           <Button variant="warning" onClick={handleNewReceiptClick} className="billiards-button"> Anadir recibo</Button>

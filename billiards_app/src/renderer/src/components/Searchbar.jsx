@@ -103,7 +103,7 @@ const Searchbar = ({ handleGetByCategory }) => {
                             </Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
-                    <Form.Control type="input" id="search-input" placeHolder={currentPlaceholder} onChange={handleSearchInputChange} />
+                    <Form.Control type="input" id="search-input" placeholder={currentPlaceholder} onChange={handleSearchInputChange} />
                     <Button variant="warning" onClick={() => searchByInput(searchInput)}> Buscar </Button>
                 </Form.Group>
             </Form>

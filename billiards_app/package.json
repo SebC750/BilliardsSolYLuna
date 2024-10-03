@@ -20,16 +20,21 @@
   "build": {
     "appId": "com.sebastian_chalarca.BilliardsSolYLunaReceiptApp",
     "productName": "BilliardsSolYLunaReceiptApp",
-    "files": [
+    "files": 
+    [   
       "dist/**/*",
       "out/**/*",
       "node_modules/**/*",
-      "package.json"
+      "package.json",
+      "src/**/*", 
+      "build/**/*",  
+      "electron.vite.config.mjs" 
     ],
     "win": {
       "target": [
         "nsis"
       ],
+      "signAndEditExecutable": false,
       "icon": "./build/icon.ico"
     }
   },

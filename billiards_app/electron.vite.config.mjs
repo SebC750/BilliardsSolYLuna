@@ -4,14 +4,14 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   main: {
-    entry: 'src/main.js',  
+    entry: 'src/main/main.js',  
     build: {
       outDir: 'out/main',  
     },
     plugins: [externalizeDepsPlugin()],
   },
   preload: {
-    entry: 'src/preload.js',  
+    entry: 'src/preload/preload.js',  
     build: {
       outDir: 'out/preload',  
     },
