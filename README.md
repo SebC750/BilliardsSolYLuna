@@ -10,11 +10,16 @@ Billiards Sol Y Luna is a bar and tavern located in Corona, NYC. The establishme
 - Receipt tracking: Each pool table (3 pool tables in total) has a receipt table which shows the orders made by people playing on those tables. Other receipts for people who are not playing in tables are tracked in a separate section called "other receipts". 
 ![receipt tracking](other_receipts.png)
 ![total receipt pool table](total_receipt_pool_table_example.png)
+
 - Order history database: A major concern in the development of this system is finding an embedded database to store data on disk, eliminating the need to host web services. I use NeDB for its lightweight and quick setup, as well as its simple to write mongodb operations. 
 ![order history database](receipt_history_management.png)
 
 - Search bar: A simple search tool for finding specific data so that the user can filter search results by keywords. You also have the option to search by categories such as client name, date of purchase, table, product and status.
 ![search bar](searchbar.png)
+
+## What's new? (As of Oct 10, 2024)
+- Changed prices of goods as per the client's request.
+- Added missing dollar sign to prices in other receipts section.
 
 ## Future plans
 Following the distribution of the app, some future improvements include:
@@ -27,7 +32,7 @@ Following the distribution of the app, some future improvements include:
 
 ### Frontend
 - HTML
-- CSS + React Bootstrap 
+- CSS + React Bootstrap
 - JSX
 - React.js
 ### Backend

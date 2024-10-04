@@ -189,7 +189,7 @@ const OtherReceiptTable = () => {
 
                                 <td> {order.quantity} </td>
                                 <td> {order.product} </td>
-                                <td> {order.price} </td>
+                                <td> ${order.price} </td>
                                 <td> {order.date} </td>
                                 <td style={{ color: order.status === "sin pagar" ? "red" : "green" }}> {order.status} </td>
                                 

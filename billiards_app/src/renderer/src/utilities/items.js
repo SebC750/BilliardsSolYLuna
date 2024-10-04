@@ -14,17 +14,17 @@ const ItemArray =
       {
         "item_id": 3,
         "item_name": "Vaso de vino",
-        "item_price": 6
+        "item_price": 8
       },
       {
         "item_id": 4,
         "item_name": "Michelada",
-        "item_price": 12
+        "item_price": 14
       },
       {
         "item_id": 5,
         "item_name": "Doble Michelada",
-        "item_price": 12
+        "item_price": 18
       },
       {
         "item_id": 6,
@@ -39,7 +39,7 @@ const ItemArray =
       {
         "item_id": 8,
         "item_name": "Botella de Vino",
-        "item_price": 28
+        "item_price": 30
       },
       {
         "item_id": 9,
@@ -55,12 +55,17 @@ const ItemArray =
       {
         "item_id": 12,
         "item_name": "Cubeta",
-        "item_price": 30
+        "item_price": 33
       },
       {
         "item_id": 13,
         "item_name": "Bocadillo",
         "item_price": 2
       },
+      {
+        "item_id": 14,
+        "item_name": "Gomichela",
+        "item_price": 16
+      }
     ]
 export default ItemArray;
