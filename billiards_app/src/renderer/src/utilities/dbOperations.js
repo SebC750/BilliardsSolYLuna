@@ -1,5 +1,6 @@
-//Modularized db operations away from pages. Makes code clean and easy to follow.
+//Modularized db operations away from pages. Makes code clean and easy to follow. Also separates the api from the UI. 
 
+//Included all of my api in a class to easily define the apis where needed and write out the functions with api. instead of having to write import statements for the functions.
 class API {
     constructor() {
         

@@ -16,7 +16,12 @@ const db = new Datastore({ filename: join(app.getPath('userData'), "orders.db"),
 //Database API routes
 ipcMain.handle('get-all', async (event, {offset, limit}) =>{
   try {
+    //For every get route, we first obtain the total number of results because we need it to determine the total number of pages we need to render in the frontend.
     const totalRecords = await db.count({});  
+    //Then, we employ pagination on the find({}) operation by adding the offset and the limit (10). For example, a user on page 2, would mean only return data between 10 and 20.
+    //This is necessary for ensuring better performance because bringing all of the data at once is going to take a toll on the program as the dataset increases.
+
+    //The data is by default sorted by data but in the future, i will be writing sorting functions for more sorting options.
     const getAllDatabaseValues = await db.find({}).skip(offset).limit(limit).sort({ date: -1 });
     return {
       orders: getAllDatabaseValues,
@@ -106,7 +111,7 @@ ipcMain.handle('get-table', async (event, data, {offset, limit}) =>{
 
 ipcMain.handle('get-receipt-orders', async (event, data) =>{
   try{
-    const getAllDatabaseValues = db.find({receiptID: data}).sort({date: 1})
+    const getAllDatabaseValues = db.find({receiptID: data}).sort({date: -1})
     return getAllDatabaseValues
   }catch(error){
     console.error('Could not get all of the database records by receipts! Error:', error);

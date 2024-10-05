@@ -4,8 +4,9 @@ import API from "../utilities/dbOperations.js";
 import { useState, useEffect } from "react";
 import "../assets/main.css";
 import PageNavigator from "./PageNavigator.jsx";
-
+//The receipt history renders a table of past invoices and information such as date of purchase, status of payment, client names etc.
 const api = new API()
+const LIMIT_OF_DATA_FOR_EACH_PAGE = 10;
 const ReceiptHistory = () => {
   const [showModal, setShowModal] = useState(false);
   const [showPaidModal, setShowPaidModal] = useState(false);
@@ -14,11 +15,9 @@ const ReceiptHistory = () => {
   const [selectedReceiptID, setSelectedReceiptID] = useState("");
   const [totalRecords, setTotalRecords] = useState(0); 
   const [offset, setOffset] = useState(0); 
-  const limit = 10; 
-
+  //Get all the data including the orders and the total number of records.
   async function getAllData(offset, limit) {
     const allData = await api.getAllOrders(offset, limit); 
-    console.log(allData)
     if (allData && allData.orders) {
       updateOrderHistory(allData.orders); 
       setTotalRecords(allData.totalCount); 
@@ -34,8 +33,9 @@ const ReceiptHistory = () => {
      setSelectedReceiptID(receiptID)
      setShowPaidModal(true);
   }
+  //Handles page clicks to cause a reload of the data with a new offset.
   const handlePageClick = (pageNumber) => {
-    let newOffset = (pageNumber - 1) * limit;
+    let newOffset = (pageNumber - 1) * LIMIT_OF_DATA_FOR_EACH_PAGE;
     setOffset(newOffset);
   };
 
@@ -43,25 +43,25 @@ const ReceiptHistory = () => {
     await api.deleteOrder(selectedReceiptID, selectedOrderID);
     setShowModal(false);
     setSelectedOrderID("");
-    getAllData(offset, limit); 
+    getAllData(offset, LIMIT_OF_DATA_FOR_EACH_PAGE); 
   };
-
-  const handleGetAllDataAgain = (allData) =>{
+  //This order receives order results from the searchbar component and updates the order list.
+  const handleGetDataByCategory = (allData) =>{
     if (allData && allData.orders) {
       updateOrderHistory(allData.orders); 
       setTotalRecords(allData.totalCount); 
     }
   }
-
+  //Update status of payment as paid when people pay for their orders.
   const handleMarkAsPaidOrder = async () => {
     await api.updateOrderAsPaid(selectedReceiptID, selectedOrderID);
     setShowPaidModal(false);
     setSelectedOrderID("");
-    getAllData(offset,limit); 
+    getAllData(offset,LIMIT_OF_DATA_FOR_EACH_PAGE); 
   };
   
   useEffect(() => {
-    getAllData(offset, limit);
+    getAllData(offset, LIMIT_OF_DATA_FOR_EACH_PAGE);
   }, [offset]);
 
   return (
@@ -70,9 +70,9 @@ const ReceiptHistory = () => {
         <div className="receipt-history-title">Historial de recibos</div>
         <Container className="receipt-history-container">
           <div className="search-bar">
-            <Searchbar handleGetByCategory={(allData) => handleGetAllDataAgain(allData)} />
+            <Searchbar handleGetByCategory={(allData) => handleGetDataByCategory(allData)} />
           </div>
-
+          
           <Table>
             <thead>
               <tr>
@@ -118,16 +118,17 @@ const ReceiptHistory = () => {
               )}
             </tbody>
           </Table>
-      
+          
           <PageNavigator
-            limit={limit}
+            limit={LIMIT_OF_DATA_FOR_EACH_PAGE}
             totalRecords={totalRecords} 
             handlePageClick={handlePageClick}
           />
+          {/* Refresh button for the user to update the list manually after orders are added.*/}
           <Button size={"lg"} style={{marginTop: 20,width: "100%", marginBottom: 10}} onClick={() => getAllData()}> Refrescar </Button>
         </Container>
       </Container>
-  
+      {/* Modals for warning user about permanent deletions and status updates. Will modularize this further in the future. */}
       <Modal show={showPaidModal}>
         <Modal.Header>
           <Modal.Title>¿Estás seguro?</Modal.Title>

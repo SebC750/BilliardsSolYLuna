@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import API from "../utilities/dbOperations.js"
 import OrderModal from "./OrderModal.jsx"
 import '../assets/main.css'
-
+//Section including other receipts not related to the pool tables. Some people don't want to play but just drink.
 const api = new API();
 const OtherReceiptTable = () => {
   const [receiptList, updateReceiptList] = useState([])
@@ -19,7 +19,7 @@ const OtherReceiptTable = () => {
   async function addOrderToReceipt(receiptID, itemName, itemPrice, quantity) {
     setAddOrderPrompt(false)
     const receiptToAdd = receiptList.find((id) => id.receiptID === receiptID)
-    console.log(receiptToAdd)
+    //The date is formatted in localeString because the establishment is in NYC EST. The time needs to reflect that.
     let orderDate = new Date()
     let formattedDate = orderDate.toLocaleString("en-US", { timeZone: "America/New_York" })
     let order = {
@@ -32,8 +32,8 @@ const OtherReceiptTable = () => {
       status: 'sin pagar',
       date: formattedDate
     };
+    //Add orders first to the receipt object and then to the database to keep the order on record.
     receiptToAdd.orders.push(order)
-    console.log(receiptList)
     await api.insertOrder(order)
   }
 
@@ -80,6 +80,7 @@ const OtherReceiptTable = () => {
         if (receipt.receiptID === receiptID) {
           let total = 0;
           receipt.orders.forEach((val) => {
+            //Should only charge for orders not marked as paid yet. Sometimes, people pay in advance.
             if (val.status === "sin pagar") {
               total += val.price;
             }
@@ -101,7 +102,7 @@ const OtherReceiptTable = () => {
   }
 
   const closeOrderModal = () => setAddOrderPrompt(false)
-
+  //The receiptList array holds receipts each having their ID, name and their own list of orders.
   const createNewReceipt = async () => {
     setShowNewReceiptModal(false)
     const newReceiptID = await api.generateNewReceiptID()
@@ -122,14 +123,14 @@ const OtherReceiptTable = () => {
   const handleNewReceiptClick = () => {
     setShowNewReceiptModal(true)
   }
-
+  //Sometimes, people might not want to drink and that might not be known until after the receipt is created. Receipts can be deleted without invoices.
   const handleEraseReceiptClick = async (receiptID) => {
     const receiptToRemove = receiptList.find((id) => id.receiptID === receiptID)
     await api.deleteAllOrdersFromReceipt(receiptToRemove.receiptID)
     console.log("Clearing receipt")
     clearReceipt(receiptID)
   }
-
+   //For when the user wants to print out the final invoice.
   const handleFinishReceiptClick = (receiptID) => {
     calculateTotal(receiptID)
   }
@@ -221,7 +222,7 @@ const OtherReceiptTable = () => {
 
                         </Table>
                         <Button variant="warning" style={{ marginRight: 10 }} onClick={() => handleAddPurchasePrompt(val.receiptID)}> Anadir orden </Button>
-
+                         
                         {!val.showReceiptTotal ? (
                           <>
                             <Button variant="warning" style={{ marginRight: 10 }} onClick={() => handleFinishReceiptClick(val.receiptID)}> Terminar recibo</Button>

@@ -1,4 +1,3 @@
-
 const ItemArray = 
     
      [{
@@ -39,7 +38,7 @@ const ItemArray =
       {
         "item_id": 8,
         "item_name": "Botella de Vino",
-        "item_price": 30
+        "item_price": [30,40]
       },
       {
         "item_id": 9,

@@ -1,6 +1,6 @@
 import { Navbar, Dropdown } from "react-bootstrap";
 import logo from "../assets/images/sunandmoon.png";
-import "./navbar.css";
+import "../assets/navbar.css";
 
 const Navigationbar = () => {
   return (
@@ -15,6 +15,7 @@ const Navigationbar = () => {
             Navegar a mesa
           </Dropdown.Toggle>
           <Dropdown.Menu>
+            {/* All the table sections are in column format. Need to add anchors for easier navigation around the system.*/}
             <Dropdown.Item href="#mesa-1">
               Mesa 1
             </Dropdown.Item>

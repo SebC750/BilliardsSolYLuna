@@ -31,9 +31,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               
               setAddOrderPrompt(false)
               let orderDate = new Date()
-              let formattedDate = orderDate.toLocaleString("en-US", {timeZone: "America/New_York"})
-              
-              
+              let formattedDate = orderDate.toLocaleString("en-US", {timeZone: "America/New_York"})   
               let order = {
                      clientName: clientName,
                      receiptID: receiptID,
@@ -49,6 +47,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
        }
 
        const calculateTotalPrice = () => {
+              
               let h = Math.floor(time / 3600).toFixed(0);
               let m = Math.floor((time % 3600) / 60).toFixed(0);
               let s = (time % 60).toFixed(0);
@@ -61,6 +60,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                      }       
               });
               setOrderListPrice(total)
+              //Calculate the price of playing on the table and add it to the total.
               let tablePrice = (20 * h) + (20 / 60 * m) + (20 / 3600 * s);
               setTablePrice(tablePrice);
               let totalPrice = tablePrice + total;
@@ -141,7 +141,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               }
               return () => clearInterval(interval)
        }, [timeStart])
-
+      //Open/Close Paid modal refers to the update order status modal wheras the open and close modal refers to deleting the order entirely.
        const handleOpenPaidModal = (selectedOrderID) => {
               setShowPaidModal(true)
               setSelectedOrderID(selectedOrderID)
@@ -187,7 +187,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                             <div className="pool-table-title" style={{ backgroundColor: tableColor }}>
                                    <span style={{ fontSize: 24 }}>  Mesa {tableNumber} </span>
                                    {showStartButton ? (
-                                          <>
+                                          <>                                               
                                                  <Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleTimerStartClick}> Comenzar tiempo</Button>
                                           </>
                                    ) : showEndButton ? (<Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleTimerEndClick}> Terminar tiempo</Button>) : null}
