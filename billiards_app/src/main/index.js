@@ -191,11 +191,12 @@ ipcMain.handle('generate-new-receipt-id', async () =>{
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 670,
+    width: 1560,
+    height: 1080,
     show: false,
     autoHideMenuBar: true,
     resizable:false,
+    
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       nodeIntegration: false,
@@ -204,7 +205,7 @@ function createWindow() {
       sandbox: false
     }
   })
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })

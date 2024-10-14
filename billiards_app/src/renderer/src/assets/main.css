@@ -53,6 +53,7 @@ a{
   border-width: 2px; 
   border-color: orange;
   margin-bottom: 10px;
+  overflow: scroll;
 }
 .search-bar{
   margin-top: 10px;

@@ -168,7 +168,7 @@ const OtherReceiptTable = () => {
                 {receiptList.map((val) => (
                   <>
                     <Col xs={6}>
-                      <Container style={{ padding: 20 }}>
+                      <Container style={{ marginRight: 40, padding: 20}}>
                         <h2> {val.receiptName}</h2>
                         <p> ID: {val.receiptID}</p>
                         <Table>

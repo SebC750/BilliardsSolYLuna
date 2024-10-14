@@ -125,7 +125,7 @@ const ReceiptHistory = () => {
             handlePageClick={handlePageClick}
           />
           {/* Refresh button for the user to update the list manually after orders are added.*/}
-          <Button size={"lg"} style={{marginTop: 20,width: "100%", marginBottom: 10}} onClick={() => getAllData()}> Refrescar </Button>
+          <Button size={"lg"} style={{marginTop: 20,width: "100%", marginBottom: 10}} onClick={() => getAllData(0,10)}> Refrescar </Button>
         </Container>
       </Container>
       {/* Modals for warning user about permanent deletions and status updates. Will modularize this further in the future. */}
