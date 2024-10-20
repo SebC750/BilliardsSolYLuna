@@ -17,7 +17,7 @@ function App() {
         <Table tableNumber={3} tableColor={"green"} />
       </div>
       <div id="otros-recibos">
-        <OtherReceiptsTable />
+        <OtherReceiptsTable tableColor={"orange"}/>
       </div>
       <div id="receipt-history">
         <ReceiptHistory />  

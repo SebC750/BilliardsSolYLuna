@@ -7,8 +7,7 @@ class API {
     }
 
 async getAllOrders(offset, limit) {
-    try {
-        
+    try {     
         const response = await window.api.getAll(offset, limit)
         return response
     } catch (e) {

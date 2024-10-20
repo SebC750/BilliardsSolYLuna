@@ -13,25 +13,25 @@ const ReceiptHistory = () => {
   const [orderHistory, updateOrderHistory] = useState([]);
   const [selectedOrderID, setSelectedOrderID] = useState("");
   const [selectedReceiptID, setSelectedReceiptID] = useState("");
-  const [totalRecords, setTotalRecords] = useState(0); 
-  const [offset, setOffset] = useState(0); 
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [offset, setOffset] = useState(0);
   //Get all the data including the orders and the total number of records.
   async function getAllData(offset, limit) {
-    const allData = await api.getAllOrders(offset, limit); 
+    const allData = await api.getAllOrders(offset, limit);
     if (allData && allData.orders) {
-      updateOrderHistory(allData.orders); 
-      setTotalRecords(allData.totalCount); 
+      updateOrderHistory(allData.orders);
+      setTotalRecords(allData.totalCount);
     }
   }
-  const handleDeleteOrder = (receiptID, orderID) =>{
-     setSelectedOrderID(orderID);
-     setSelectedReceiptID(receiptID)
-     setShowModal(true);
+  const handleDeleteOrder = (receiptID, orderID) => {
+    setSelectedOrderID(orderID);
+    setSelectedReceiptID(receiptID)
+    setShowModal(true);
   }
-  const handleMarkAsPaid = (receiptID,orderID) =>{
-     setSelectedOrderID(orderID)
-     setSelectedReceiptID(receiptID)
-     setShowPaidModal(true);
+  const handleMarkAsPaid = (receiptID, orderID) => {
+    setSelectedOrderID(orderID)
+    setSelectedReceiptID(receiptID)
+    setShowPaidModal(true);
   }
   //Handles page clicks to cause a reload of the data with a new offset.
   const handlePageClick = (pageNumber) => {
@@ -43,13 +43,13 @@ const ReceiptHistory = () => {
     await api.deleteOrder(selectedReceiptID, selectedOrderID);
     setShowModal(false);
     setSelectedOrderID("");
-    getAllData(offset, LIMIT_OF_DATA_FOR_EACH_PAGE); 
+    getAllData(offset, LIMIT_OF_DATA_FOR_EACH_PAGE);
   };
   //This order receives order results from the searchbar component and updates the order list.
-  const handleGetDataByCategory = (allData) =>{
+  const handleGetDataByCategory = (allData) => {
     if (allData && allData.orders) {
-      updateOrderHistory(allData.orders); 
-      setTotalRecords(allData.totalCount); 
+      updateOrderHistory(allData.orders);
+      setTotalRecords(allData.totalCount);
     }
   }
   //Update status of payment as paid when people pay for their orders.
@@ -57,9 +57,9 @@ const ReceiptHistory = () => {
     await api.updateOrderAsPaid(selectedReceiptID, selectedOrderID);
     setShowPaidModal(false);
     setSelectedOrderID("");
-    getAllData(offset,LIMIT_OF_DATA_FOR_EACH_PAGE); 
+    getAllData(offset, LIMIT_OF_DATA_FOR_EACH_PAGE);
   };
-  
+
   useEffect(() => {
     getAllData(offset, LIMIT_OF_DATA_FOR_EACH_PAGE);
   }, [offset]);
@@ -72,7 +72,7 @@ const ReceiptHistory = () => {
           <div className="search-bar">
             <Searchbar handleGetByCategory={(allData) => handleGetDataByCategory(allData)} />
           </div>
-          
+
           <Table>
             <thead>
               <tr>
@@ -84,7 +84,7 @@ const ReceiptHistory = () => {
                 <th>Precio</th>
                 <th>Fecha de compra</th>
                 <th>Estado</th>
-                
+
               </tr>
             </thead>
             <tbody>
@@ -118,14 +118,14 @@ const ReceiptHistory = () => {
               )}
             </tbody>
           </Table>
-          
+
           <PageNavigator
             limit={LIMIT_OF_DATA_FOR_EACH_PAGE}
-            totalRecords={totalRecords} 
+            totalRecords={totalRecords}
             handlePageClick={handlePageClick}
           />
           {/* Refresh button for the user to update the list manually after orders are added.*/}
-          <Button size={"lg"} style={{marginTop: 20,width: "100%", marginBottom: 10}} onClick={() => getAllData(0,10)}> Refrescar </Button>
+          <Button size={"lg"} style={{ marginTop: 20, width: "100%", marginBottom: 10 }} onClick={() => getAllData(0, 10)}> Refrescar </Button>
         </Container>
       </Container>
       {/* Modals for warning user about permanent deletions and status updates. Will modularize this further in the future. */}

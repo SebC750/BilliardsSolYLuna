@@ -58,7 +58,7 @@ const Searchbar = ({ handleGetByCategory }) => {
             }
             
         } catch (e) {
-            console.error("This is invalid input.")
+            return "This is an invalid input. Error: "+e
         }
     }
     const getAllDataAgain = async (category) =>{

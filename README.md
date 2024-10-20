@@ -17,9 +17,9 @@ Billiards Sol Y Luna is a bar and tavern located in Corona, NYC. The establishme
 - Search bar: A simple search tool for finding specific data so that the user can filter search results by keywords. You also have the option to search by categories such as client name, date of purchase, table, product and status.
 ![search bar](searchbar.png)
 
-## What's new? (As of Oct 10, 2024)
-- Changed prices of goods as per the client's request.
-- Added missing dollar sign to prices in other receipts section.
+## What's new? (As of Oct 20, 2024)
+- Added tipping options for 10%, 15% and 20%. Clients can now add tips on top of their receipt. 
+Employees can now benefit from earning extra income through tipping. Works for both table and other receipts.
 
 ## Future plans
 Following the distribution of the app, some future improvements include:
