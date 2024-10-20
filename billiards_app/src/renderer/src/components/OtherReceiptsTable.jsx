@@ -3,18 +3,19 @@ import { useState, useEffect } from "react"
 import API from "../utilities/dbOperations.js"
 import OrderModal from "./OrderModal.jsx"
 import '../assets/main.css'
+import { TipPrompt } from "./TipPrompt.jsx"
 //Section including other receipts not related to the pool tables. Some people don't want to play but just drink.
 const api = new API();
-const OtherReceiptTable = () => {
+const OtherReceiptTable = ({ tableColor }) => {
   const [receiptList, updateReceiptList] = useState([])
   const [receiptName, setReceiptName] = useState("")
   const [showNewReceiptModal, setShowNewReceiptModal] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [showPaidModal, setShowPaidModal] = useState(false)
   const [addOrderPrompt, setAddOrderPrompt] = useState(false)
-  const [showReceiptTotal, setShowReceiptTotal] = useState(false)
   const [selectedReceiptID, setSelectedReceiptID] = useState("")
   const [selectedOrderDate, setSelectedOrderDate] = useState("")
+  const [isTipPromptOpen, setIsTipPromptOpen] = useState(false)
 
   async function addOrderToReceipt(receiptID, itemName, itemPrice, quantity) {
     setAddOrderPrompt(false)
@@ -35,6 +36,17 @@ const OtherReceiptTable = () => {
     //Add orders first to the receipt object and then to the database to keep the order on record.
     receiptToAdd.orders.push(order)
     await api.insertOrder(order)
+  }
+  const handleAddTip = (tipInfo, totalPriceWithTip) => {
+      setIsTipPromptOpen(false)
+      updateReceiptList((prevList) => {
+      return prevList.map((receipt) => {
+        if (receipt.receiptID === selectedReceiptID) {      
+          return { ...receipt, showReceiptTotal: true, tipAmount: tipInfo, orderListPrice: totalPriceWithTip };
+        }
+        return receipt;
+      });
+    });
   }
 
   const removeOrderFromReceipt = async () => {
@@ -85,10 +97,11 @@ const OtherReceiptTable = () => {
               total += val.price;
             }
           });
+          
           let salesTax = total * 0.08875;
           let totalPriceWithSales = (Math.round((total + salesTax) * 100) / 100).toFixed(2);
-
-          return { ...receipt, showReceiptTotal: true, orderListPrice: totalPriceWithSales };
+        
+          return { ...receipt, showReceiptTotal: true, totalPrice: total, orderListPrice: totalPriceWithSales };
         }
         return receipt;
       });
@@ -98,7 +111,8 @@ const OtherReceiptTable = () => {
   const clearReceipt = (receiptID) => {
     const updatedArray = receiptList.filter((id) => id.receiptID !== receiptID)
     updateReceiptList(updatedArray)
-    setShowReceiptTotal(false)
+    setTotalPriceWithTax(null)
+    setSelectedReceiptID(null)
   }
 
   const closeOrderModal = () => setAddOrderPrompt(false)
@@ -127,12 +141,13 @@ const OtherReceiptTable = () => {
   const handleEraseReceiptClick = async (receiptID) => {
     const receiptToRemove = receiptList.find((id) => id.receiptID === receiptID)
     await api.deleteAllOrdersFromReceipt(receiptToRemove.receiptID)
-    console.log("Clearing receipt")
     clearReceipt(receiptID)
   }
-   //For when the user wants to print out the final invoice.
+  //For when the user wants to print out the final invoice.
   const handleFinishReceiptClick = (receiptID) => {
+    setIsTipPromptOpen(true)
     calculateTotal(receiptID)
+    setSelectedReceiptID(receiptID)
   }
 
   const handleAddPurchasePrompt = (receiptID) => {
@@ -146,11 +161,8 @@ const OtherReceiptTable = () => {
     setShowModal(true);
   }
   const handleMarkAsPaid = (receiptID, orderDate) => {
-    console.log(receiptID)
-    console.log(orderDate)
     setSelectedOrderDate(orderDate)
     setSelectedReceiptID(receiptID)
-
     setShowPaidModal(true);
   }
 
@@ -168,67 +180,59 @@ const OtherReceiptTable = () => {
                 {receiptList.map((val) => (
                   <>
                     <Col xs={6}>
-                      <Container style={{ marginRight: 40, padding: 20}}>
+                      <Container style={{ marginRight: 40, padding: 20 }}>
                         <h2> {val.receiptName}</h2>
                         <p> ID: {val.receiptID}</p>
                         <Table>
                           <thead>
                             <tr>
-
                               <th> Cantidad</th>
                               <th> Producto</th>
                               <th> Precio</th>
                               <th> Fecha</th>
                               <th> Estado</th>
                               <th> </th>
-
                             </tr>
                           </thead>
                           <tbody>
                             {val.orders.map((order, index) => (
                               <tr key={index}>
-
                                 <td> {order.quantity} </td>
                                 <td> {order.product} </td>
                                 <td> ${order.price} </td>
                                 <td> {order.date} </td>
                                 <td style={{ color: order.status === "sin pagar" ? "red" : "green" }}> {order.status} </td>
-                                
-                                  <td> <Button variant="danger" onClick={() => handleDeleteOrder(val.receiptID, order.date)}>
-                                    Borrar
-                                  </Button>
-                                    {order.status === "sin pagar" ? (<Button variant="success" onClick={() => handleMarkAsPaid(val.receiptID, order.date)}> Cancelar </Button>) : null}
-                                  </td>
-                               
 
+                                <td> <Button variant="danger" onClick={() => handleDeleteOrder(val.receiptID, order.date)}>
+                                  Borrar
+                                </Button>
+                                  {order.status === "sin pagar" ? (<Button variant="success" onClick={() => handleMarkAsPaid(val.receiptID, order.date)}> Cancelar </Button>) : null}
+                                </td>
                               </tr>
-
                             ))}
                           </tbody>
-
-                          {val.showReceiptTotal ? (
-                            <>
-                              <div className="total-receipt-title" style={{ backgroundColor: 'orange' }}> Recibo Total </div>
-                              <Table>
-                                <thead> </thead>
-                                <tbody>
-                                  <tr> <td> Sales tax                </td> <td> 8.875%                                   </td> </tr>
-                                  <tr> <td> <strong> Total </strong> </td> <td> <strong> ${val.orderListPrice} </strong> </td> </tr>
-                                </tbody>
-                              </Table>
-                            </>
-                          ) : null}
-
-
                         </Table>
-                        <Button variant="warning" style={{ marginRight: 10 }} onClick={() => handleAddPurchasePrompt(val.receiptID)}> Anadir orden </Button>
-                         
-                        {!val.showReceiptTotal ? (
+                        {val.showReceiptTotal ? (
                           <>
+                            <div className="total-receipt-title" style={{ backgroundColor: tableColor }}> Recibo Total </div>
+                            <Table>
+                              <thead> </thead>
+                              <tbody>
+                                <tr> <td> Precio de productos                </td> <td> ${val.totalPrice}                                   </td> </tr>
+                                <tr> <td> Sales tax                </td> <td> 8.875%                                   </td> </tr>
+                                {val.tipAmount && (<tr> <td> Propina </td> <td> ${val.tipAmount} </td> </tr>)}
+                                <tr> <td> <strong> Total </strong> </td> <td> <strong> ${val.orderListPrice} </strong> </td> </tr>
+                              </tbody>
+                            </Table>
+                            <TipPrompt isTipPromptOpen={isTipPromptOpen} totalPrice={val.orderListPrice} tableColor={"Orange"} handleAddTip={handleAddTip} />
+                            <Button variant="warning" style={{ marginRight: 10 }} onClick={() => clearReceipt(val.receiptID)}> Limpiar Recibo </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button variant="warning" style={{ marginRight: 10 }} onClick={() => handleAddPurchasePrompt(val.receiptID)}> Anadir orden </Button>
                             <Button variant="warning" style={{ marginRight: 10 }} onClick={() => handleFinishReceiptClick(val.receiptID)}> Terminar recibo</Button>
                             <Button variant="warning" style={{ marginRight: 10 }} onClick={() => handleEraseReceiptClick(val.receiptID)}> Borrar recibo </Button>
-                          </>) : <Button variant="warning" style={{ marginRight: 10 }} onClick={() => clearReceipt(val.receiptID)}> Limpiar Recibo </Button>}
-
+                          </>)}
                       </Container>
                     </Col>
                   </>

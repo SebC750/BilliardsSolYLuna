@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 import OrderModal from "./OrderModal.jsx"
 import API from "../utilities/dbOperations.js"
 import "../assets/main.css"
-
+import { TipPrompt } from "./TipPrompt.jsx"
 const api = new API()
 const PoolTable = ({ tableNumber, tableColor }) => {
 
@@ -21,17 +21,17 @@ const PoolTable = ({ tableNumber, tableColor }) => {
        const [tablePrice, setTablePrice] = useState(0)
        const [totalPrice, setTotalPrice] = useState(0)
        const [totalReceipt, showTotalReceipt] = useState(false)
-       const [totalTimeElapsed, setTotalTimeElapsed] = useState("")
        const [showModal, setShowModal] = useState(false)
        const [showPaidModal, setShowPaidModal] = useState(false);
        const [receiptID, setReceiptID] = useState("")
        const [selectedOrderID, setSelectedOrderID] = useState("")
+       const [isTipPromptOpen, setIsTipPromptOpen] = useState(false)
+       const [tip, setTip] = useState(null)
 
        async function handleAddPurchase(clientName, itemPrice, quantity, itemName) {
-              
               setAddOrderPrompt(false)
               let orderDate = new Date()
-              let formattedDate = orderDate.toLocaleString("en-US", {timeZone: "America/New_York"})   
+              let formattedDate = orderDate.toLocaleString("en-US", { timeZone: "America/New_York" })
               let order = {
                      clientName: clientName,
                      receiptID: receiptID,
@@ -45,19 +45,26 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               setOrderList([...orderList, order]);
               await api.insertOrder(order)
        }
+       const handleAddTip = (tip, totalPriceWithTip) => {
+              try {
+                     setIsTipPromptOpen(false)
+                     setTotalPrice(totalPriceWithTip)
+                     setTip(tip)
+              } catch (e) {
+                     return "Sorry! Could not update total! Error: " + e
+              }
 
+       }
        const calculateTotalPrice = () => {
-              
+
               let h = Math.floor(time / 3600).toFixed(0);
               let m = Math.floor((time % 3600) / 60).toFixed(0);
               let s = (time % 60).toFixed(0);
-              let totalTimeElapsed = h.toString().padStart(2, '0') + " : " + m.toString().padStart(2, '0') + " : " + s.toString().padStart(2, '0');
-              setTotalTimeElapsed(totalTimeElapsed);
               let total = 0;
               orderList.forEach((val) => {
-                     if(val.status === "sin pagar"){
+                     if (val.status === "sin pagar") {
                             total += val.price;
-                     }       
+                     }
               });
               setOrderListPrice(total)
               //Calculate the price of playing on the table and add it to the total.
@@ -83,6 +90,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               setEndTime(hourTo12.toString().padStart(2, '0') + ":" + endDate.getMinutes().toString().padStart(2, '0') + ":" + endDate.getSeconds().toString().padStart(2, '0') + " " + am_pm)
               calculateTotalPrice()
               showTotalReceipt(true)
+              setIsTipPromptOpen(true)
        }
 
        const handleTimerStartClick = async () => {
@@ -113,6 +121,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               setOrderListPrice(0)
               setTotalPrice(0)
               setTime(0)
+              setTip(null)
        }
 
        useEffect(() => {
@@ -141,7 +150,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
               }
               return () => clearInterval(interval)
        }, [timeStart])
-      //Open/Close Paid modal refers to the update order status modal wheras the open and close modal refers to deleting the order entirely.
+       //Open/Close Paid modal refers to the update order status modal wheras the open and close modal refers to deleting the order entirely.
        const handleOpenPaidModal = (selectedOrderID) => {
               setShowPaidModal(true)
               setSelectedOrderID(selectedOrderID)
@@ -168,7 +177,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
        }
 
        async function getAllReceiptOrders(receiptID) {
-              const allReceiptOrders = await api.getOrdersByReceiptID(receiptID)      
+              const allReceiptOrders = await api.getOrdersByReceiptID(receiptID)
               if (allReceiptOrders) {
                      setOrderList(allReceiptOrders)
               }
@@ -187,7 +196,7 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                             <div className="pool-table-title" style={{ backgroundColor: tableColor }}>
                                    <span style={{ fontSize: 24 }}>  Mesa {tableNumber} </span>
                                    {showStartButton ? (
-                                          <>                                               
+                                          <>
                                                  <Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleTimerStartClick}> Comenzar tiempo</Button>
                                           </>
                                    ) : showEndButton ? (<Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleTimerEndClick}> Terminar tiempo</Button>) : null}
@@ -258,11 +267,13 @@ const PoolTable = ({ tableNumber, tableColor }) => {
                                                                <tr> <td> Total de productos </td>        <td> ${orderListPrice.toFixed(2)}     </td> </tr>
                                                                <tr> <td> Total de mesa </td>             <td> ${tablePrice.toFixed(2)}         </td> </tr>
                                                                <tr> <td> Sales tax </td>                 <td> 8.875%                           </td> </tr>
+                                                               {tip && (<tr> <td> Propina </td> <td> {tip} </td></tr>)}
                                                                <tr> <td> <strong> Total </strong>  </td> <td> <strong> ${totalPrice} </strong> </td> </tr>
                                                         </tbody>
                                                  </Table>
+                                                 <TipPrompt isTipPromptOpen={isTipPromptOpen} totalPrice={totalPrice} tableColor={tableColor} handleAddTip={handleAddTip} />
                                                  <Button variant={tableColor === "red" ? "danger" : tableColor === "blue" ? "primary" : "success"} onClick={handleClearTable}> Limpiar mesa</Button>
-                                                 
+
                                           </>
                                    ) : null}
                                    <OrderModal isOpen={addOrderPrompt} handleAddPurchase={handleAddPurchase} close={closeOrderModal} currentReceiptID={null} isOtherReceipt={false}> </OrderModal>

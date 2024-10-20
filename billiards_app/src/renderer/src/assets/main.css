@@ -72,3 +72,17 @@ a{
   align-items: center;
   justify-content: center;
 }
+.tip-section{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.tip-options{
+  display: flex;
+  justify-content: center;
+  align-items:center;
+}
+.tip-options button{
+  margin-right: 10px;
+}
